@@ -3,6 +3,7 @@ package cs.hm.edu.cpvm.dataLayer;
 import java.util.ArrayList;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
+import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
 
@@ -26,6 +27,14 @@ public interface DBAccessor {
 	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
 	 */
 	public void updateCustomervalues(ArrayList<Customervalues> values) throws DBException;
+	
+	/**
+	 * Gibt die Kundendaten für einen Kunden anhand seiner ID aus der DB zurück.
+	 * @param id Kundennummer des Kundens
+	 * @return gesamter Kundendatensatz
+	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
+	 */
+	public Customerdata getCustomerdata(int id) throws DBException;
 	
 	
 	/**

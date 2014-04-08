@@ -15,7 +15,7 @@ public interface Controller {
 	/**
 	 * Zeigt die View an.
 	 */
-	public void show();
+	public void display();
 	
 	/**
 	 * Blendet die View aus. Muss aber nicht zwangsl‰ufig ein echtes schlieﬂen sein, kann je nach fall auch ein reines Ausblenden sein.

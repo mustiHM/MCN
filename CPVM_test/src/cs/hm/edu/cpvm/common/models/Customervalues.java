@@ -8,7 +8,7 @@ package cs.hm.edu.cpvm.common.models;
 public class Customervalues {
 
 	private int id;
-	private int customerId;
+	private Customerdata customerdata;
 	private double profit; // Gewinn
 	private double sales; // Umsatz
 	private int contracts; // Anzahl an Verträgen
@@ -30,11 +30,11 @@ public class Customervalues {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getCustomerId() {
-		return customerId;
+	public Customerdata getCustomerdata() {
+		return customerdata;
 	}
-	public void setCustomerId(int customerId) {
-		this.customerId = customerId;
+	public void setCustomerdata(Customerdata customerdata) {
+		this.customerdata = customerdata;
 	}
 	public double getProfit() {
 		return profit;

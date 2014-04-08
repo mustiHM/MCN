@@ -22,6 +22,7 @@ public class MainView extends JFrame implements Controller{
 	private JButton btnGewichtungsfaktorenEditieren;
 	private ActionListener listener;
 	
+	private Controller viewKundendatenAnzeigen;
 
 	
 	public static void main(String[] args) {
@@ -43,6 +44,9 @@ public class MainView extends JFrame implements Controller{
 	
 	public void initialize() {
 	
+		viewKundendatenAnzeigen = new CustomerDataView();
+		viewKundendatenAnzeigen.initialize();
+		
 		listener = new ActionListenerImpl();
 		
 		setTitle("Hauptmen\u00FC - CPVM");
@@ -82,6 +86,10 @@ public class MainView extends JFrame implements Controller{
 		
 	}
 	
+	public void display(){
+		// kann für das Hauptmenü ignoriert werden, da es dauerhaft angezeigt wird.
+	}
+	
 	/**
 	 * Private ActionListener-Klasse
 	 * @author Mustafa
@@ -91,7 +99,7 @@ public class MainView extends JFrame implements Controller{
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (arg0.getSource().equals(btnKundendatenAnzeigen)) {
-
+				viewKundendatenAnzeigen.display();
 			} else if (arg0.getSource().equals(btnKundenwerteBerechnen)) {
 
 			} else if (arg0.getSource().equals(btnKundenergebnisseAnzeigen)) {
