@@ -23,6 +23,8 @@ public class MainView extends JFrame implements Controller{
 	private ActionListener listener;
 	
 	private Controller viewKundendatenAnzeigen;
+	private Controller viewKundenErgebnisseAnzeigen;
+	private Controller viewKonfigAnzeigen;
 
 	
 	public static void main(String[] args) {
@@ -46,6 +48,10 @@ public class MainView extends JFrame implements Controller{
 	
 		viewKundendatenAnzeigen = new CustomerDataView();
 		viewKundendatenAnzeigen.initialize();
+		viewKundenErgebnisseAnzeigen = new CustomerResultView();
+		viewKundenErgebnisseAnzeigen.initialize();
+		viewKonfigAnzeigen = new CustomerValuesConfigurationView();
+		viewKonfigAnzeigen.initialize();
 		
 		listener = new ActionListenerImpl();
 		
@@ -103,9 +109,9 @@ public class MainView extends JFrame implements Controller{
 			} else if (arg0.getSource().equals(btnKundenwerteBerechnen)) {
 
 			} else if (arg0.getSource().equals(btnKundenergebnisseAnzeigen)) {
-
+				viewKundenErgebnisseAnzeigen.display();
 			} else if (arg0.getSource().equals(btnGewichtungsfaktorenEditieren)) {
-
+				viewKonfigAnzeigen.display();
 			}
 		}
 		
