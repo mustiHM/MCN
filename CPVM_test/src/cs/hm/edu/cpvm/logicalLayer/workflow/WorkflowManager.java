@@ -29,4 +29,16 @@ public interface WorkflowManager {
 	 */
 	public void updateCustomervalues(ArrayList<Customervalues> values) throws DBException, ValidationException;
 	
+	
+	/**
+	 * Startet die Berechnung der Kundenwerte und erstellt für jeden Kundendatensatz einen Berechnungs-Thread aus der Calculation-Komponente.
+	 */
+	public void startCalculation();
+	
+	/**
+	 * Überwacht die Berechnungen und gibt zurück, ob diese fertiggelaufen ist.
+	 * @return true, falls Berechnungen fertig sind. Andernfalls false.
+	 * @throws CalculationTimeoutException 
+	 */
+	public boolean isCalculationDone();
 }

@@ -16,7 +16,7 @@ public class Customervalues {
 	private int cup; // Cross-Up-Buying Potenzial
 	private double roi; // Return on Invenstment
 	private double profitability; // Profitabilität
-	private double profitMargin;
+	private double profitMargin; // Deckungsbeitrag
 	private double investment;
 	private double scalefactor; 
 	private int loyality;

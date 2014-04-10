@@ -1,6 +1,11 @@
 package cs.hm.edu.cpvm.logicalLayer.calculation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import cs.hm.edu.cpvm.common.exceptions.DBException;
+import cs.hm.edu.cpvm.common.models.Customervalues;
+import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
 
 /**
  * Stellt die  Berechnungskomponente dar und bietet Methoden zum Berechnen einzelner Kennzahlen.
@@ -10,9 +15,17 @@ import cs.hm.edu.cpvm.common.exceptions.DBException;
 public interface Calculation {
 
 	/**
-	 * Startet die Berechnung. Welche konkreten Kennzahlen berechnet werden, kann je nach Implementierung unterschiedlich aussehen.
+	 * Speichert die Kundenwerte eines Kundens
+	 * @param values Kundenwerte eines Kundens
 	 */
-	public void startCalculation();
+	public void setCustomervalues(Customervalues values);
+	
+	
+	/**
+	 * Speichert alle Gewichtungsfaktoren und sonstige Variablen und stellt sie für die Berechnung zur Verfügung.
+	 * @param configs Liste aller zu nutzenden Variablen, Gewichtungsfaktoren etc.
+	 */
+	public void setCustomervaluesConfigurations(HashMap<String, Double> configs);
 	
 	/**
 	 * Gibt zurück, ob die Berechnung durchgelaufen ist.
