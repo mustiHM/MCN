@@ -41,7 +41,7 @@ public class MainView extends JFrame implements Controller{
 		});
 	}
 
-	
+	//
 
 	
 	public void initialize() {
