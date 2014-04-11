@@ -12,17 +12,18 @@ public class Customervalues {
 	private double profit; // Gewinn
 	private double sales; // Umsatz
 	private int contracts; // Anzahl an Verträgen
+	private double salesDeduction; // Erlösschmälerung
 	private double informationValue; // Informationswert
 	private int cup; // Cross-Up-Buying Potenzial
 	private double roi; // Return on Invenstment
 	private double profitability; // Profitabilität
 	private double profitMargin; // Deckungsbeitrag
-	private double investment;
-	private double scalefactor; 
-	private int loyality;
-	private String calculationDate;
-	private double customerValueResult1;
-	private double customerValueResult2;
+	private double investment; // Investition
+	private double scalefactor; // Skaleneffekt
+	private int loyality; // Loyalitätspotenzial
+	private String calculationDate; // Datum der Berechnung
+	private double customerValueResult1; // gewichteter Kundenwert1
+	private double customerValueResult2; // gewichteter Kundenwert2
 	
 	public int getId() {
 		return id;
@@ -53,6 +54,12 @@ public class Customervalues {
 	}
 	public void setContracts(int contracts) {
 		this.contracts = contracts;
+	}
+	public double getSalesDeduction(){
+		return salesDeduction;
+	}
+	public void setSalesDeduction(double salesDeduction){
+		this.salesDeduction = salesDeduction;
 	}
 	public double getInformationValue() {
 		return informationValue;

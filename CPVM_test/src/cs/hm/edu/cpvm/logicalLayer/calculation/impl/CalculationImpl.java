@@ -23,6 +23,7 @@ public class CalculationImpl extends Thread implements Calculation{
 	// generelle Attribute / Objekte für die Berechnung
 	private static Log log = LogFactory.getLog(CalculationImpl.class);
 	private static ArrayList<Customervalues> allCustomerValues;
+	private static boolean isStatisticalCalculationDone;
 	
 	private static double meanRenta; // Mittelwert der Rentabilität
 	private static double meanROI; // Mittelwert des ROI
@@ -31,19 +32,29 @@ public class CalculationImpl extends Thread implements Calculation{
 	private static double meanIW; // Mittelwert des Informationswerts
 	private static double meanCUP; // Mittelwert des Cross-/Up-Buying Potenzials
 	private static double meanLP; // Mittelwert des Loyalitätspotenzial
+	private static double stabwRenta; // Standardabweichung der Rentabilität
+	private static double stabwROI; // Standardabweichung des ROI
+	private static double stabwDB; // Standardabweichung des DB
+	private static double stabwSkE; // Standardabweichung des Skaleneffekts
+	private static double stabwIW; // Standardabweichung des Informationswerts
+	private static double stabwCUP; // Standardabweichung des Cross-/Up-Buying Potenzials
+	private static double stabwLP; // Standardabweichung des Loyalitätspotenzial
+	private static double varRenta; // Varianz der Rentabilität
+	private static double varROI; // Varianz des ROI
+	private static double varDB; // Varianz des DB
+	private static double varSkE; // Varianz des Skaleneffekts
+	private static double varIW; // Varianz des Informationswerts
+	private static double varCUP; // Varianz des Cross-/Up-Buying Potenzials
+	private static double varLP; // Varianz des Loyalitätspotenzials
+	
+	
 	
 	// Attribute / Objekte für einen einzelnen Kunden:
 	private Customervalues values; // die einzelnen Kundenwerte eines Kundens.
 	private HashMap<String, Double> config; // die Gewichtungsfaktoren
 	private boolean isCalculationDone; // Flag zum Status der Berechnung eines Kundens (für die gesamten Berechnungen)
 	
-	private double stabwRenta; // Standardabweichung der Rentabilität
-	private double stabwROI; // Standardabweichung des ROI
-	private double stabwDB; // Standardabweichung des DB
-	private double stabwSkE; // Standardabweichung des Skaleneffekts
-	private double stabwIW; // Standardabweichung des Informationswerts
-	private double stabwCUP; // Standardabweichung des Cross-/Up-Buying Potenzials
-	private double stabwLP; // Standardabweichung des Loyalitätspotenzial
+	
 	
 	
 	/**
@@ -52,6 +63,221 @@ public class CalculationImpl extends Thread implements Calculation{
 	 */
 	public static void setAllCustomervalues(ArrayList<Customervalues> allValues){
 		allCustomerValues = allValues;
+	}
+	
+	/**
+	 * Startet die Berechnung der statistischen Werte wie Mittelwert, Varianz und Standardabweichung für jede Kennzahl.
+	 */
+	public static void startStatisticalCalculation(){
+		isStatisticalCalculationDone = false;
+		
+		// Berechnung der Mittelwerte
+		calculateMeanRenta();
+		calculateMeanROI();
+		calculateMeanDB();
+		calculateMeanSkE();
+		calculateMeanIW();
+		calculateMeanCUP();
+		calculateMeanLP();
+		// Berechnung der Varianz
+		calculateVarRenta();
+		calculateVarRoi();
+		calculateVarDB();
+		calculateVarSkE();
+		calculateVarIW();
+		calculateVarCUP();
+		calculateVarLP();
+		// Berechnung der Standardabweichungen
+		stabwRenta = calculateStandardDeviation(varRenta);
+		stabwROI = calculateStandardDeviation(varROI);
+		stabwDB = calculateStandardDeviation(varDB);
+		stabwSkE = calculateStandardDeviation(varSkE);
+		stabwIW = calculateStandardDeviation(varIW);
+		stabwCUP = calculateStandardDeviation(varCUP);
+		stabwLP = calculateStandardDeviation(varLP);
+		
+		isStatisticalCalculationDone = true;
+	}
+	
+	/**
+	 * Berechnet den Mittelwert der Rentabilität
+	 */
+	private static void calculateMeanRenta(){
+		double totalRenta = 0;
+		
+		for(int i=0; i<allCustomerValues.size();i++){
+			totalRenta = totalRenta + allCustomerValues.get(i).getProfitability();
+		}
+		
+		meanRenta = totalRenta/allCustomerValues.size();
+	}
+	
+	/**
+	 * Berechnet den Mittelwert des DB.
+	 */
+	private static void calculateMeanROI(){
+		double totalROI = 0;
+		
+		for(int i=0; i<allCustomerValues.size();i++){
+			totalROI = totalROI + allCustomerValues.get(i).getRoi();
+		}
+		
+		meanROI = totalROI/allCustomerValues.size();
+	}
+	
+	/**
+	 * Berechnet den Mittelwert des Deckungsbeitrags.
+	 */
+	private static void calculateMeanDB(){
+		double totalDB = 0;
+		
+		for(int i=0; i<allCustomerValues.size();i++){
+			totalDB = totalDB + allCustomerValues.get(i).getProfitMargin();
+		}
+		
+		meanDB = totalDB/allCustomerValues.size();
+		
+	}
+	
+	/**
+	 * Berechnet den Mittelwert für den Skaleneffekt
+	 */
+	private static void calculateMeanSkE(){
+		double totalSkE = 0;
+		for(int i=0; i<allCustomerValues.size();i++){
+			totalSkE = totalSkE + allCustomerValues.get(i).getScalefactor();
+		}
+		
+		meanSke = totalSkE/allCustomerValues.size();
+	}
+	
+	/**
+	 * Berechnet den Mittelwert für den Informationswert.
+	 */
+	private static void calculateMeanIW(){
+		double totalIW = 0;
+		for(int i=0; i<allCustomerValues.size();i++){
+			totalIW = totalIW + allCustomerValues.get(i).getInformationValue();
+		}
+		
+		meanIW = totalIW/allCustomerValues.size();
+	}
+	
+	/**
+	 * Berechnet den Mittelwert des Cross-/Up-Buying Potenzials
+	 */
+	private static void calculateMeanCUP(){
+		double totalCUP = 0;
+		for(int i=0; i<allCustomerValues.size();i++){
+			totalCUP = totalCUP + allCustomerValues.get(i).getCup();
+		}
+		
+		meanCUP = totalCUP/allCustomerValues.size();
+	}
+	
+	/**
+	 * Berechnet den Mittelwert des Loyalitätspotenzials.
+	 */
+	private static void calculateMeanLP(){
+		double totalLP = 0;
+		for(int i=0; i<allCustomerValues.size();i++){
+			totalLP = totalLP + allCustomerValues.get(i).getLoyality();
+		}
+		
+		meanLP = totalLP/allCustomerValues.size();
+	}
+	/**
+	 * Berechnet die Varianz der Rentabilität
+	 */
+	private static void calculateVarRenta(){
+		double firstResult=0;
+		for(int i=0; i<allCustomerValues.size(); i++){
+			firstResult = firstResult + Math.pow(allCustomerValues.get(i).getProfitability()-meanRenta, 2);
+		}
+		
+		varRenta = (firstResult)/(allCustomerValues.size()-1);
+	}
+	
+	/**
+	 * Berechnet die Varianz des ROI
+	 */
+	private static void calculateVarRoi(){
+		double firstResult=0;
+		for(int i=0; i<allCustomerValues.size(); i++){
+			firstResult = firstResult + Math.pow(allCustomerValues.get(i).getRoi()-meanROI, 2);
+		}
+		
+		varROI = (firstResult)/(allCustomerValues.size()-1);
+	}
+	
+	/**
+	 * Berechnet die Varianz des DB
+	 */
+	private static void calculateVarDB(){
+		double firstResult=0;
+		for(int i=0; i<allCustomerValues.size(); i++){
+			firstResult = firstResult + Math.pow(allCustomerValues.get(i).getProfitMargin()-meanDB, 2);
+		}
+		
+		varDB = (firstResult)/(allCustomerValues.size()-1);
+	}
+	
+	/**
+	 * Berechnet die Varianz des Skaleneffekts
+	 */
+	private static void calculateVarSkE(){
+		double firstResult=0;
+		for(int i=0; i<allCustomerValues.size(); i++){
+			firstResult = firstResult + Math.pow(allCustomerValues.get(i).getScalefactor()-meanSke, 2);
+		}
+		
+		varSkE = (firstResult)/(allCustomerValues.size()-1);
+	}
+	
+	/**
+	 * Berechnet die Varianz des Informationswerts
+	 */
+	private static void calculateVarIW(){
+		double firstResult=0;
+		for(int i=0; i<allCustomerValues.size(); i++){
+			firstResult = firstResult + Math.pow(allCustomerValues.get(i).getInformationValue()-meanIW, 2);
+		}
+		
+		varIW = (firstResult)/(allCustomerValues.size()-1);
+	}
+	
+	
+	/**
+	 * Berechnet die Varianz des Cross-/Up-Buying Potenzials
+	 */
+	private static void calculateVarCUP(){
+		double firstResult=0;
+		for(int i=0; i<allCustomerValues.size(); i++){
+			firstResult = firstResult + Math.pow(allCustomerValues.get(i).getCup()-meanCUP, 2);
+		}
+		
+		varCUP = (firstResult)/(allCustomerValues.size()-1);
+	}
+	
+	/**
+	 * Berechnet die Varianz des Loyalitätspotenzials
+	 */
+	private static void calculateVarLP(){
+		double firstResult=0;
+		for(int i=0; i<allCustomerValues.size(); i++){
+			firstResult = firstResult + Math.pow(allCustomerValues.get(i).getLoyality()-meanLP, 2);
+		}
+		
+		varLP = (firstResult)/(allCustomerValues.size()-1);
+	}
+	
+	/**
+	 * Berechnet die Standardabweichung einer gegebenen Varianz.
+	 * @param variance die Varianz zu der die Standardabw. berechnet werden soll.
+	 * @return die Standardabweichung des Werts
+	 */
+	private static double calculateStandardDeviation(double variance){
+		return Math.sqrt(variance);
 	}
 	
 	
@@ -94,6 +320,20 @@ public class CalculationImpl extends Thread implements Calculation{
 		
 		double customerValueResult1 = calculateCustomerValueResult1();
 		values.setCustomerValueResult1(customerValueResult1);
+		
+		// TODO indikator für workflow manager implementieren, damit er weiss, wann er die statistischen berechnungen anstoßen kann.
+		// warte auf statistische Berechnungen
+		while(!isStatisticalCalculationDone){
+			try {
+				sleep(100);
+			} catch (InterruptedException e) {
+				log.error(e.getStackTrace());
+				e.printStackTrace();
+			}
+		}
+		
+		double customerValueResult2 = calculateCustomerValueResult2();
+		values.setCustomerValueResult2(customerValueResult2);
 		
 		isCalculationDone = true;
 		
@@ -186,6 +426,19 @@ public class CalculationImpl extends Thread implements Calculation{
 				+(values.getInformationValue()*gewIW)+(values.getScalefactor()*gewSkE);
 		log.debug("Gewichteter Kundenwert1 beträgt: " + customerresult1);
 		return customerresult1;
+	}
+	
+	/**
+	 * Berechnet den gewichteten Kundenwert 2.
+	 * @return gewichteten Kundenwert2.
+	 */
+	private double calculateCustomerValueResult2(){
+		// Formel: Summe (VertRenta * Wert Renta; VertROI * Wert ROI; VertDB * Wert DB; VertSkE * Wert SkE; VertIW * Wert IW; VertCUP * Wert CUP; VertLP * Wert LP)
+		// TODO Wert Renta berechnen
+		
+		double vertRenta = config.get("VerRenta");
+		//TODO weitere configs laden
+		return 0;
 	}
 
 }

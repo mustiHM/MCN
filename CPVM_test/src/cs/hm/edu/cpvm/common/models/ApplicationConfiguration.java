@@ -11,7 +11,7 @@ public class ApplicationConfiguration {
 	private String parameter;
 	private String value;
 	private String datatype;
-	private String describtion;
+	private String description;
 	
 	public int getId() {
 		return id;
@@ -37,11 +37,11 @@ public class ApplicationConfiguration {
 	public void setDatatype(String datatype) {
 		this.datatype = datatype;
 	}
-	public String getDescribtion() {
-		return describtion;
+	public String getDescription() {
+		return description;
 	}
-	public void setDescribtion(String describtion) {
-		this.describtion = describtion;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	
