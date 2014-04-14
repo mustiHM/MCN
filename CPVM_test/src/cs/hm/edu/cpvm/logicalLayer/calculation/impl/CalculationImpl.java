@@ -24,6 +24,7 @@ public class CalculationImpl extends Thread implements Calculation{
 	private static Log log = LogFactory.getLog(CalculationImpl.class);
 	private static ArrayList<Customervalues> allCustomerValues;
 	private static boolean isStatisticalCalculationDone;
+	private static int numberOfWaitingThreads; // Nummer an Threads die mit ihrer eigenen Berechnung fertig sind (bis zum Kundenwert1)
 	
 	private static double meanRenta; // Mittelwert der Rentabilität
 	private static double meanROI; // Mittelwert des ROI
@@ -55,7 +56,14 @@ public class CalculationImpl extends Thread implements Calculation{
 	private boolean isCalculationDone; // Flag zum Status der Berechnung eines Kundens (für die gesamten Berechnungen)
 	
 	
-	
+	/**
+	 * Gibt die Anzahl an Threads zurück, die mit ihrer eigenen Berechnung fertig sind.
+	 * Sie haben also bis zum Kundenwert 1 gerechnet und wartet nun auf die statistische Gesamtrechnung.
+	 * @return
+	 */
+	public static int getNumberOfWaitingThreads(){
+		return numberOfWaitingThreads;
+	}
 	
 	/**
 	 * Soeichert alle Kundenwerte ab, damit sie für die Mittelwert-Berechnungen genutzt werden können.
@@ -70,7 +78,7 @@ public class CalculationImpl extends Thread implements Calculation{
 	 */
 	public static void startStatisticalCalculation(){
 		isStatisticalCalculationDone = false;
-		
+		log.debug("Beginne mit Statistischen Berechnungen..");
 		// Berechnung der Mittelwerte
 		calculateMeanRenta();
 		calculateMeanROI();
@@ -96,6 +104,7 @@ public class CalculationImpl extends Thread implements Calculation{
 		stabwCUP = calculateStandardDeviation(varCUP);
 		stabwLP = calculateStandardDeviation(varLP);
 		
+		log.debug("statistische Berechnungen fertig..");
 		isStatisticalCalculationDone = true;
 	}
 	
@@ -321,8 +330,9 @@ public class CalculationImpl extends Thread implements Calculation{
 		double customerValueResult1 = calculateCustomerValueResult1();
 		values.setCustomerValueResult1(customerValueResult1);
 		
-		// TODO indikator für workflow manager implementieren, damit er weiss, wann er die statistischen berechnungen anstoßen kann.
+		log.debug("eigene Werte berechnet, warte auf statistische Berechnung");
 		// warte auf statistische Berechnungen
+		numberOfWaitingThreads++;
 		while(!isStatisticalCalculationDone){
 			try {
 				sleep(100);
@@ -434,11 +444,58 @@ public class CalculationImpl extends Thread implements Calculation{
 	 */
 	private double calculateCustomerValueResult2(){
 		// Formel: Summe (VertRenta * Wert Renta; VertROI * Wert ROI; VertDB * Wert DB; VertSkE * Wert SkE; VertIW * Wert IW; VertCUP * Wert CUP; VertLP * Wert LP)
-		// TODO Wert Renta berechnen
+		log.debug("Berechne standartisierten Wert für Rentabilität mit den Parametern: Rentabilität = " + values.getProfitability() + "; Mittelwert Rentabilität = " + meanRenta + 
+				"; Stand.Abw. Rentabilität = " + stabwRenta);
+		double wertRenta = (values.getProfitability()-meanRenta)/stabwRenta;
+		log.debug("standartisierter Wert für Rentabilität beträgt: " + wertRenta);
 		
-		double vertRenta = config.get("VerRenta");
-		//TODO weitere configs laden
-		return 0;
+		log.debug("Berechne standartisierten Wert für ROI mit den Parametern: ROI = " + values.getRoi() + "; Mittelwert ROI = " + meanROI + 
+				"; Stand.Abw. ROI = " + stabwROI);
+		double wertRoi = (values.getRoi()-meanROI)/stabwROI;
+		log.debug("standartisierter Wert für Rentabilität beträgt: " + wertRoi);
+		
+		log.debug("Berechne standartisierten Wert für DB mit den Parametern: DB = " + values.getProfitMargin() + "; Mittelwert DB = " + meanDB + 
+				"; Stand.Abw. DB = " + stabwDB);
+		double wertDB = (values.getProfitMargin()-meanDB)/stabwDB;
+		log.debug("standartisierter Wert für DB beträgt: " + wertDB);
+		
+		log.debug("Berechne standartisierten Wert für Skaleneffekt mit den Parametern: SkE = " + values.getScalefactor() + "; Mittelwert SkE = " + meanSke + 
+				"; Stand.Abw. SkE = " + stabwSkE);
+		double wertSkE = (values.getScalefactor()-meanSke)/stabwSkE;
+		log.debug("standartisierter Wert für Skaleneffekt beträgt: " + wertSkE);
+		
+		log.debug("Berechne standartisierten Wert für Informationswert mit den Parametern: Informationswert = " + values.getInformationValue() + "; Mittelwert Informationswert = " + meanIW + 
+				"; Stand.Abw. Informationswert = " + stabwIW);
+		double wertIW = (values.getInformationValue()-meanIW)/stabwIW;
+		log.debug("standartisierter Wert für Informationswert beträgt: " + wertIW);
+		
+		log.debug("Berechne standartisierten Wert für Cross-/Up-Potenzial mit den Parametern: Cross-/Up-Potenzial = " + values.getCup() + "; Mittelwert Cross-/Up-Potenzial = " + meanCUP + 
+				"; Stand.Abw. Cross-/Up-Potenzial = " + stabwCUP);
+		double wertCUP = (values.getCup()-meanCUP)/stabwCUP;
+		log.debug("standartisierter Wert für Cross-/Up-Potenzial beträgt: " + wertCUP);
+		
+		
+		log.debug("Berechne standartisierten Wert für Loyalitätspotenzial mit den Parametern: Loyalitätspotenzial = " + values.getLoyality() + "; Mittelwert Loyalitätspotenzial = " + meanLP + 
+				"; Stand.Abw. Loyalitätspotenzial = " + stabwLP);
+		double wertLP = (values.getLoyality()-meanLP)/stabwLP;
+		log.debug("standartisierter Wert für Loyalitätspotenzial beträgt: " + wertLP);
+		
+		
+		double vertRenta = config.get("VertRenta");
+		double vertROI = config.get("VertROI");
+		double vertDB = config.get("VertDB");
+		double vertSkE = config.get("VertSkE");
+		double vertIW = config.get("VertIW");
+		double vertCUP = config.get("VertCUP");
+		double vertLP = config.get("VertLP");
+		
+		log.debug("Berechne gewichteten Kundenwert 2 mit den Parametern: Verteilung Rentabilität = " + vertRenta + "; standartisierte Rentabilität = " + wertRenta + 
+				"; Verteilung ROI = " + vertROI + "; standartisierter ROI = " + wertRoi + "; Verteilung Deckungsbeitrag = " + vertDB + "; standartisierter Deckungsbeitrag = " + wertDB + "und bla bla");
+		double customerresult2 = (vertRenta*wertRenta)+(vertROI*wertRoi)+(vertDB*wertDB)+(vertSkE*wertSkE)+(vertIW*wertIW)+(vertCUP*wertCUP)+(vertLP*wertLP);
+		log.debug("Gewichteter Kundenwert2 beträgt: " + customerresult2);
+		
+		
+		return customerresult2;
 	}
 
 }
