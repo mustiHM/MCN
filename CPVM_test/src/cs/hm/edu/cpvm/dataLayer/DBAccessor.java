@@ -1,6 +1,7 @@
 package cs.hm.edu.cpvm.dataLayer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
 import cs.hm.edu.cpvm.common.models.Customerdata;
@@ -29,12 +30,19 @@ public interface DBAccessor {
 	public void updateCustomervalues(ArrayList<Customervalues> values) throws DBException;
 	
 	/**
-	 * Gibt die Kundendaten für einen Kunden anhand seiner ID aus der DB zurück.
-	 * @param id Kundennummer des Kundens
-	 * @return gesamter Kundendatensatz
+	 * Gibt alle Kundenwerte für eine Liste von Kundendaten zurück.
+	 * @param customers Liste von Kundendaten
+	 * @return Kennzahlen zu den Kunden aus der übergebenen Liste.
 	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
 	 */
-	public Customerdata getCustomerdata(int id) throws DBException;
+	public ArrayList<Customervalues> getCustomervaluesForCustomerdata(ArrayList<Customerdata> customers) throws DBException;
+	
+	/**
+	 * Gibt alle Kundendaten aus der Datenbank zurück.
+	 * @return alle Kundendaten
+	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
+	 */
+	public ArrayList<Customerdata> getAllCustomerdata() throws DBException;
 	
 	
 	/**
@@ -42,14 +50,14 @@ public interface DBAccessor {
 	 * @return alle Gewichtungsfaktoren
 	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
 	 */
-	public ArrayList<CustomervaluesConfiguration> getAllCustomervaluesConfigurations() throws DBException;
+	public HashMap<String, Double> getAllCustomervaluesConfigurations() throws DBException;
 	
 	/**
 	 * Speichert die veränderten Gewichtungen in der Datenbank.
 	 * @param configurations alle veränderten Gewichtungen
 	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
 	 */
-	public void updateCustomervaluesConfiguration(ArrayList<CustomervaluesConfiguration> configurations) throws DBException;
+	public void updateCustomervaluesConfiguration(HashMap<String, Double> configurations) throws DBException;
 	
 	
 }

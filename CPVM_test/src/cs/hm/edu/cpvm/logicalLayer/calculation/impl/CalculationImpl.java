@@ -25,6 +25,7 @@ public class CalculationImpl extends Thread implements Calculation{
 	private static ArrayList<Customervalues> allCustomerValues;
 	private static boolean isStatisticalCalculationDone;
 	private static int numberOfWaitingThreads; // Nummer an Threads die mit ihrer eigenen Berechnung fertig sind (bis zum Kundenwert1)
+	private static int numberOfFinishedThreads; // Anzahl der komplett fertigen Threads
 	
 	private static double meanRenta; // Mittelwert der Rentabilität
 	private static double meanROI; // Mittelwert des ROI
@@ -59,10 +60,18 @@ public class CalculationImpl extends Thread implements Calculation{
 	/**
 	 * Gibt die Anzahl an Threads zurück, die mit ihrer eigenen Berechnung fertig sind.
 	 * Sie haben also bis zum Kundenwert 1 gerechnet und wartet nun auf die statistische Gesamtrechnung.
-	 * @return
+	 * @return Anzahl an wartenden Threads
 	 */
 	public static int getNumberOfWaitingThreads(){
 		return numberOfWaitingThreads;
+	}
+	
+	/**
+	 * Gibt die Anzahl an Threads zurück, die mit der gesamten Berechnung fertig sind.
+	 * @return Anzahl an fertigen Threads.
+	 */
+	public static int getNumberOfFinishedThreads(){
+		return numberOfFinishedThreads;
 	}
 	
 	/**
@@ -74,10 +83,20 @@ public class CalculationImpl extends Thread implements Calculation{
 	}
 	
 	/**
+	 * Bereitet Berechnungskomponente für die Nutzung vor.
+	 */
+	public static void prepareCalculations(){
+		numberOfWaitingThreads = 0;
+		numberOfFinishedThreads = 0;
+		isStatisticalCalculationDone = false;
+		log.debug("*** Berechnungskomponente erfolgreich vorbereitet ***");
+	}
+	
+	/**
 	 * Startet die Berechnung der statistischen Werte wie Mittelwert, Varianz und Standardabweichung für jede Kennzahl.
 	 */
 	public static void startStatisticalCalculation(){
-		isStatisticalCalculationDone = false;
+		
 		log.debug("Beginne mit Statistischen Berechnungen..");
 		// Berechnung der Mittelwerte
 		calculateMeanRenta();
@@ -346,7 +365,7 @@ public class CalculationImpl extends Thread implements Calculation{
 		values.setCustomerValueResult2(customerValueResult2);
 		
 		isCalculationDone = true;
-		
+		numberOfFinishedThreads++;
 	}
 	
 	/**

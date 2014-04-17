@@ -42,13 +42,12 @@ public class CustomerDataView extends JFrame implements Controller {
 			
 		setTitle("Kundendaten - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds(400, 200, 1000, 700);
+		setBounds(400, 200, 975, 600);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		
 		
 		String[] titles = new String[] {
 				"Kundennr.", "Name", "Gewinn", "Umsatz", "Verträge", "Erlösschmälerung", "Informationswert", "Cross-/Up-Buying", "Loyalitätspotenzial", "Investitionswert", "Rentabilität", "ROI", "Deckungsbeitrag", "Skaleneffekt"
@@ -74,11 +73,11 @@ public class CustomerDataView extends JFrame implements Controller {
 		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		
-		scroller.setBounds(79, 62, 800, 500);
+		scroller.setBounds(10, 10, 950, 500);
 		contentPane.add(scroller);
 		
 		JButton btnSpeichern = new JButton("Speichern");
-		btnSpeichern.setBounds(450, 600, 95, 23);
+		btnSpeichern.setBounds(427, 530, 95, 23);
 		contentPane.add(btnSpeichern);
 
 	}

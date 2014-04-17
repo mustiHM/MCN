@@ -49,7 +49,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	@Override
 	public void initialize() {
 		setTitle("Konfiguration - CPVM");
-		setBounds(400, 200, 450, 439);
+		setBounds(700, 400, 450, 439);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

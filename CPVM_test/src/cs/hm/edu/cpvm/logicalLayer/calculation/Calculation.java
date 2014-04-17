@@ -8,14 +8,14 @@ import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
 
 /**
- * Stellt die  Berechnungskomponente dar und bietet Methoden zum Berechnen einzelner Kennzahlen.
+ * Stellt die  Berechnungskomponente dar und bietet Methoden zum Berechnen einzelner sowie statischer Kennzahlen.
  * @author Mustafa
  *
  */
 public interface Calculation {
 
 	/**
-	 * Speichert die Kundenwerte eines Kundens
+	 * Speichert die Kundenwerte eines Kundens für die Berechnung ab.
 	 * @param values Kundenwerte eines Kundens
 	 */
 	public void setCustomervalues(Customervalues values);
@@ -28,7 +28,7 @@ public interface Calculation {
 	public void setCustomervaluesConfigurations(HashMap<String, Double> configs);
 	
 	/**
-	 * Gibt zurück, ob die Berechnung durchgelaufen ist.
+	 * Gibt zurück, ob die Berechnung eines Kundendatensatzes durchgelaufen ist.
 	 * @return true, wenn die Berechnung erfolgreich durchgelaufen ist, andernfalls false.
 	 * @throws DBException Fehler, falls die Datenbank nicht verfügbar ist.
 	 */

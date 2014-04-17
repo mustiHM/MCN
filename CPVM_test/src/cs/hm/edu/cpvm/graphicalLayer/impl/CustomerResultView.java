@@ -36,12 +36,7 @@ public class CustomerResultView extends JFrame implements Controller {
 
 	
 	public CustomerResultView() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+		
 	}
 
 
@@ -49,7 +44,8 @@ public class CustomerResultView extends JFrame implements Controller {
 	public void initialize() {
 		setTitle("Kundenergebnisse - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds(400, 200, 700, 700);
+		setBounds(705, 200, 435, 600);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -77,17 +73,17 @@ public class CustomerResultView extends JFrame implements Controller {
 		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		
-		scroller.setBounds(150, 62, 410, 500);
+		scroller.setBounds(10, 10, 410, 500);
 		contentPane.add(scroller);
 		
 		
 		JButton btnSpeichern = new JButton("Formeln anzeigen");
-		btnSpeichern.setBounds(180, 600, 150, 23);
+		btnSpeichern.setBounds(40, 530, 150, 23);
 		contentPane.add(btnSpeichern);
 		
 
 		JButton btnProtokoll = new JButton("Protokoll anzeigen");
-		btnProtokoll.setBounds(350, 600, 150, 23);
+		btnProtokoll.setBounds(210, 530, 150, 23);
 		contentPane.add(btnProtokoll);
 		
 	}
