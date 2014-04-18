@@ -1,6 +1,7 @@
 package cs.hm.edu.cpvm.logicalLayer.workflow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
 import cs.hm.edu.cpvm.common.exceptions.ValidationException;
@@ -48,7 +49,7 @@ public interface WorkflowManager {
 	 * @return Liste aller Kennzahl-Konfigurationen
 	 * @throws DBException falls Datenbank nicht verfügbar.
 	 */
-	public ArrayList<CustomervaluesConfiguration> getCustomervaluesConfigurations() throws DBException;
+	public HashMap<String, Double> getCustomervaluesConfigurations() throws DBException;
 	
 	/**
 	 * Speichert die Gewichtungen der Kennzahlen in der Datenbank.

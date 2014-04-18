@@ -17,7 +17,16 @@ public class DBAccessorMock implements DBAccessor {
 
 	private ArrayList<Customervalues> allValues;
 	private HashMap<String, Double> configs;
+	private ArrayList<Customerdata> allData;
 	
+	@Override
+	public void updateCustomerdata(Customerdata customer) throws DBException {
+		for(int i=0; i<allValues.size(); i++){
+			if(allValues.get(i).getCustomerdata().getId()==customer.getId()){
+				allValues.get(i).setCustomerdata(customer);
+			}
+		}
+	}
 	
 	@Override
 	public ArrayList<Customervalues> getAllCustomervalues() throws DBException {
@@ -25,21 +34,31 @@ public class DBAccessorMock implements DBAccessor {
 	}
 
 	@Override
-	public void updateCustomervalues(ArrayList<Customervalues> values)
+	public void updateAllCustomervalues(ArrayList<Customervalues> values)
 			throws DBException {
 		allValues = values;
 	}
 
 	@Override
+	public void updateCustomervalues(Customervalues values) throws DBException {
+		for(int i=0; i<allValues.size(); i++){
+			if(allValues.get(i).getId()==values.getId()){
+				allValues.add(i, values);
+			}
+		}
+	}
+
+	
+	@Override
 	public ArrayList<Customervalues> getCustomervaluesForCustomerdata(
 			ArrayList<Customerdata> customers) throws DBException {
+		// reicht für den Prototypen
 		return allValues;
 	}
 
 	@Override
 	public ArrayList<Customerdata> getAllCustomerdata() throws DBException {
-		// TODO Auto-generated method stub
-		return null;
+		return allData;
 	}
 
 	@Override
@@ -51,38 +70,49 @@ public class DBAccessorMock implements DBAccessor {
 	@Override
 	public void updateCustomervaluesConfiguration(
 			HashMap<String, Double> configurations) throws DBException {
-		// TODO Auto-generated method stub
-
+		configs.putAll(configurations);
 	}
 	
 	public DBAccessorMock(){
 		
 		allValues = new ArrayList<Customervalues>();
+		allData = new ArrayList<Customerdata>();
 		
 		Customerdata customer = new Customerdata();
-		customer.setFirstName("TestVorname");
-		customer.setLastName("TestNachname");
+		customer.setId(1);
+		customer.setFirstName("VornameEins");
+		customer.setLastName("NachnameEins");
 		
 		Customerdata customer2 = new Customerdata();
+		customer2.setId(2);
 		customer2.setFirstName("VorNameZwei");
 		customer2.setLastName("NachnameZwei");
 		
 		Customerdata customer3 = new Customerdata();
+		customer3.setId(3);
 		customer3.setFirstName("VorNameDrei");
 		customer3.setLastName("NachnameDrei");
 		
 		Customerdata customer4 = new Customerdata();
+		customer4.setId(4);
 		customer4.setFirstName("VorNameVier");
 		customer4.setLastName("NachnameVier");
 		
 		Customerdata customer5 = new Customerdata();
+		customer5.setId(5);
 		customer5.setFirstName("VorNameFuenf");
 		customer5.setLastName("NachnameFuenf");
 		
+		allData.add(customer);
+		allData.add(customer2);
+		allData.add(customer3);
+		allData.add(customer4);
+		allData.add(customer5);
 		
 		
 		// Übernehmen der Kundendaten von "Kunde 1" aus dem Excelsheet.
 		Customervalues values = new Customervalues();
+		values.setId(1);
 		values.setCustomerdata(customer);
 		values.setProfit(150);
 		values.setSales(1800);
@@ -92,6 +122,7 @@ public class DBAccessorMock implements DBAccessor {
 		values.setLoyality(1);
 		
 		Customervalues values2 = new Customervalues();
+		values2.setId(2);
 		values2.setCustomerdata(customer2);
 		values2.setProfit(270);
 		values2.setSales(44526);
@@ -101,6 +132,7 @@ public class DBAccessorMock implements DBAccessor {
 		values2.setLoyality(4);
 		
 		Customervalues values3 = new Customervalues();
+		values3.setId(3);
 		values3.setCustomerdata(customer3);
 		values3.setProfit(42);
 		values3.setSales(6525);
@@ -111,6 +143,7 @@ public class DBAccessorMock implements DBAccessor {
 		
 
 		Customervalues values4 = new Customervalues();
+		values4.setId(4);
 		values4.setCustomerdata(customer4);
 		values4.setProfit(45565);
 		values4.setSales(100134);
@@ -121,6 +154,7 @@ public class DBAccessorMock implements DBAccessor {
 		
 
 		Customervalues values5 = new Customervalues();
+		values5.setId(5);
 		values5.setCustomerdata(customer5);
 		values5.setProfit(667);
 		values5.setSales(6433);
@@ -157,4 +191,5 @@ public class DBAccessorMock implements DBAccessor {
 		
 	}
 
+	
 }

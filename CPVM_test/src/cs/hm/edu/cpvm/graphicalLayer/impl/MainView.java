@@ -112,6 +112,8 @@ public class MainView extends JFrame implements Controller{
 			} else if (arg0.getSource().equals(btnKundenwerteBerechnen)) {
 				viewWaiting.display();
 			} else if (arg0.getSource().equals(btnKundenergebnisseAnzeigen)) {
+				viewKundenErgebnisseAnzeigen = new CustomerResultView();
+				viewKundenErgebnisseAnzeigen.initialize();
 				viewKundenErgebnisseAnzeigen.display();
 			} else if (arg0.getSource().equals(btnGewichtungsfaktorenEditieren)) {
 				viewKonfigAnzeigen.display();

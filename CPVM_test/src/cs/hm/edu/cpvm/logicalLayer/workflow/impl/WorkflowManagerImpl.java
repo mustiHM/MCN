@@ -5,12 +5,14 @@ import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
 import cs.hm.edu.cpvm.common.exceptions.ValidationException;
+import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
 import cs.hm.edu.cpvm.dataLayer.DBAccessor;
 import cs.hm.edu.cpvm.dataLayer.impl.DBAccessorMock;
 import cs.hm.edu.cpvm.logicalLayer.calculation.Calculation;
 import cs.hm.edu.cpvm.logicalLayer.calculation.impl.CalculationImpl;
+import cs.hm.edu.cpvm.logicalLayer.validation.Validation;
 import cs.hm.edu.cpvm.logicalLayer.workflow.WorkflowManager;
 
 /**
@@ -22,7 +24,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
 	private Calculation calculation;
 	private DBAccessor db;
+	private Validation validation;
 	private ArrayList<Customervalues> allValues;
+	private HashMap<String, Double> configurations;
 	
 	private static boolean isCalculationDone;
 	
@@ -32,14 +36,24 @@ public class WorkflowManagerImpl implements WorkflowManager {
 	}
 	
 	public ArrayList<Customervalues> getCustomervalues() throws DBException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Customerdata> customers = db.getAllCustomerdata();
+		allValues = db.getCustomervaluesForCustomerdata(customers);
+		
+		return allValues;
 	}
 
-	public void updateCustomervalues(ArrayList<Customervalues> values)
+	public void updateCustomervalues(ArrayList<Customervalues> allValues)
 			throws DBException, ValidationException {
-		// TODO Auto-generated method stub
-
+		for(int i=0; i<allValues.size();i++){
+			Customervalues values = allValues.get(i);
+			// Kundendaten speichern
+			db.updateCustomerdata(values.getCustomerdata());
+			
+			// Kundenwerte validieren
+			// momentan nicht angefordert!
+			
+			db.updateCustomervalues(values);
+		}
 	}
 
 	public void startCalculation() throws DBException {
@@ -68,7 +82,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 		CalculationImpl.startStatisticalCalculation();
 		
 		// speichern in DB
-		db.updateCustomervalues(allValues);
+		db.updateAllCustomervalues(allValues);
 		
 		isCalculationDone = true;
 		
@@ -80,16 +94,20 @@ public class WorkflowManagerImpl implements WorkflowManager {
 		return isCalculationDone;
 	}
 
-	public ArrayList<CustomervaluesConfiguration> getCustomervaluesConfigurations()
+	public HashMap<String, Double> getCustomervaluesConfigurations()
 			throws DBException {
-		// TODO Auto-generated method stub
-		return null;
+		configurations =  db.getAllCustomervaluesConfigurations();
+		return configurations;
 	}
 
 	public void updateCustomervaluesConfigurations(
 			ArrayList<CustomervaluesConfiguration> configs) throws DBException {
-		// TODO Auto-generated method stub
-
+		for(int i=0; i<configs.size(); i++){
+			// updaten der alten Werte
+			configurations.put(configs.get(i).getCustomervalueName(), configs.get(i).getWeightingFactor());
+		}
+		// neue Werte in DB speichern
+		db.updateCustomervaluesConfiguration(configurations);
 	}
 
 }

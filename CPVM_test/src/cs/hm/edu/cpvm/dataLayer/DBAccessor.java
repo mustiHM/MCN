@@ -23,11 +23,18 @@ public interface DBAccessor {
 	public ArrayList<Customervalues> getAllCustomervalues() throws DBException;
 	
 	/**
-	 * Speichert die veränderten Kundenwerte in der Datenbank.
+	 * Speichert mehrere veränderte Kundenwerte in die Datenbank.
 	 * @param values nur die veränderten Kundenwerte.
 	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
 	 */
-	public void updateCustomervalues(ArrayList<Customervalues> values) throws DBException;
+	public void updateAllCustomervalues(ArrayList<Customervalues> values) throws DBException;
+	
+	/**
+	 * Speichert die veränderten Kundenwerte eines Kundens in die Datenbank.
+	 * @param values die Kundenwerte eines Kundens.
+	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
+	 */
+	public void updateCustomervalues(Customervalues values) throws DBException;
 	
 	/**
 	 * Gibt alle Kundenwerte für eine Liste von Kundendaten zurück.
@@ -44,6 +51,12 @@ public interface DBAccessor {
 	 */
 	public ArrayList<Customerdata> getAllCustomerdata() throws DBException;
 	
+	/**
+	 * Aktualisiert die Kundendaten eines Kundens.
+	 * @param customers Kundendaten
+	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
+	 */
+	public void updateCustomerdata(Customerdata customer) throws DBException;
 	
 	/**
 	 * Liest jeden Gewichtungsfaktor aus der Datenbank aus.
