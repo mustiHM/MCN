@@ -67,7 +67,7 @@ public class CalculationImpl extends Thread implements Calculation{
 	}
 	
 	/**
-	 * Gibt die Anzahl an Threads zurück, die mit der gesamten Berechnung fertig sind.
+	 * Gibt die Anzahl an Threads zurück, die mit der gesamten Berechnung fertig sind (inkl. Kundenwert2).
 	 * @return Anzahl an fertigen Threads.
 	 */
 	public static int getNumberOfFinishedThreads(){

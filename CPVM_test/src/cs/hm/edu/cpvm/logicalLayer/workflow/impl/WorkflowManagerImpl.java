@@ -81,6 +81,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
 		
 		CalculationImpl.startStatisticalCalculation();
 		
+		while(CalculationImpl.getNumberOfFinishedThreads()!=allValues.size()){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		// speichern in DB
 		db.updateAllCustomervalues(allValues);
 		
