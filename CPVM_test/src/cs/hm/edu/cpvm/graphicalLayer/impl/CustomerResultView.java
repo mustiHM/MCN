@@ -50,6 +50,9 @@ public class CustomerResultView extends JFrame implements Controller {
 		
 	}
 
+	/**
+	 * Synchronisiert den Inhalt der Tabelle mit den Inhalten aus der DB.
+	 */
 	private void synchronizeData(){
 		try {
 			values = workflow.getCustomervalues();
@@ -106,6 +109,7 @@ public class CustomerResultView extends JFrame implements Controller {
 		
 		model = new DefaultTableModel(titles,10);
 		table = new JTable(model);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JScrollPane scroller = new JScrollPane(table);
 		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -129,8 +133,8 @@ public class CustomerResultView extends JFrame implements Controller {
 
 	@Override
 	public void display() {
-		this.setVisible(true);
 		synchronizeData();
+		this.setVisible(true);
 	}
 
 
