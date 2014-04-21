@@ -1,7 +1,12 @@
 package cs.hm.edu.cpvm.graphicalLayer.impl;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -27,6 +32,9 @@ public class CustomerResultView extends JFrame implements Controller {
 	private ArrayList<Customervalues> values;
 	private DefaultTableModel model;
 	private String[] titles;
+	private JButton btnCalculationDoc;
+	private JButton btnProtokoll;
+	private ActionListener listener;
 
 	/**
 	 * Nur zu Testzwecken
@@ -82,9 +90,7 @@ public class CustomerResultView extends JFrame implements Controller {
 		 */
 		table.getColumn("Kunde").setPreferredWidth(170);
 		table.getColumn("Kundenwert 1").setPreferredWidth(120);
-		table.getColumn("Kundenwert 2").setPreferredWidth(120);		
-		
-		
+		table.getColumn("Kundenwert 2").setPreferredWidth(120);
 		
 	}
 	
@@ -92,6 +98,7 @@ public class CustomerResultView extends JFrame implements Controller {
 	@Override
 	public void initialize() {
 		workflow = new WorkflowManagerImpl();
+		listener = new ActionListenerImpl();
 		
 		setTitle("Kundenergebnisse - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -108,7 +115,15 @@ public class CustomerResultView extends JFrame implements Controller {
 		
 		
 		model = new DefaultTableModel(titles,10);
-		table = new JTable(model);
+		table = new JTable(model) {
+            /**
+             * eigene Implementierung notwendig, damit bestimmte Spalten nicht editierbar sind!
+             */
+			public boolean isCellEditable(int x, int y) {
+                return false;
+            }
+        };
+
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JScrollPane scroller = new JScrollPane(table);
@@ -119,12 +134,13 @@ public class CustomerResultView extends JFrame implements Controller {
 		contentPane.add(scroller);
 		
 		
-		JButton btnSpeichern = new JButton("Formeln anzeigen");
-		btnSpeichern.setBounds(40, 530, 150, 23);
-		contentPane.add(btnSpeichern);
+		btnCalculationDoc = new JButton("Formeln anzeigen");
+		btnCalculationDoc.setBounds(40, 530, 150, 23);
+		btnCalculationDoc.addActionListener(listener);
+		contentPane.add(btnCalculationDoc);
 		
 
-		JButton btnProtokoll = new JButton("Protokoll anzeigen");
+		btnProtokoll = new JButton("Protokoll anzeigen");
 		btnProtokoll.setBounds(210, 530, 150, 23);
 		contentPane.add(btnProtokoll);
 		
@@ -143,4 +159,27 @@ public class CustomerResultView extends JFrame implements Controller {
 		this.setVisible(false);
 	}
 
+	
+	/**
+	 * Private ActionListener-Klasse
+	 * @author Mustafa
+	 *
+	 */
+	private class ActionListenerImpl implements ActionListener{
+
+		public void actionPerformed(ActionEvent arg0) {
+			if (arg0.getSource().equals(btnCalculationDoc)) {
+				try {
+					Desktop.getDesktop().open(new File("files/Formelschema_mit_Beispielberechnung.pdf"));
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(contentPane,
+						    "Es ist ein Fehler beim Öffnen der PDF-Datei aufgetreten: " + e1.getMessage(),
+						    "Datei-Fehler!",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			} 
+		}
+		
+	}
+	
 }

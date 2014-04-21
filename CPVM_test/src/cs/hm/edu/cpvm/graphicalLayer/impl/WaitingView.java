@@ -101,7 +101,6 @@ public class WaitingView extends JFrame implements Controller{
 				    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
 				    "Datenbank-Fehler!",
 				    JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
 		}
 	}
 	
