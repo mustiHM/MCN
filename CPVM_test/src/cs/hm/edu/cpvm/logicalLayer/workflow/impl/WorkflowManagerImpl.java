@@ -51,9 +51,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
 			
 			// Kundenwerte validieren
 			// momentan nicht angefordert!
-			
-			db.updateCustomervalues(values);
+			// TODO mit echter DB nochmal prüfen
+			//db.updateCustomervalues(values);
 		}
+		
+		db.updateAllCustomervalues(allValues);
 	}
 
 	public void startCalculation() throws DBException {

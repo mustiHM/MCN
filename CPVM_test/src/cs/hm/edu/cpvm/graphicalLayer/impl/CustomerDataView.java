@@ -1,8 +1,13 @@
 package cs.hm.edu.cpvm.graphicalLayer.impl;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -16,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
+import cs.hm.edu.cpvm.common.exceptions.ValidationException;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.graphicalLayer.Controller;
 import cs.hm.edu.cpvm.logicalLayer.workflow.WorkflowManager;
@@ -29,6 +35,8 @@ public class CustomerDataView extends JFrame implements Controller {
 	private ArrayList<Customervalues> values;
 	private DefaultTableModel model;
 	private String[] titles;
+	private JButton btnSpeichern;
+	private ActionListener listener;
 
 
 	/**
@@ -96,9 +104,72 @@ public class CustomerDataView extends JFrame implements Controller {
 		
 	}
 	
+	/**
+	 * Liest die Daten aus der Tabelle (bis zur Spalte Loyalitätspotenzial) und speichert sie zurück in die ArrayList.
+	 */
+	private void updateValues(){
+		if(values!=null){
+			for(int i=0; i<model.getRowCount(); i++){
+				Customervalues value = values.get(i);
+				Object tableObj;
+				
+				for(int columnCount=2; columnCount<=8; columnCount++){
+					tableObj = (Object) model.getValueAt(i, columnCount);
+					/* wird erstmal entfernt, da nur die genäderten Felder übernommen werden sollen.
+					 * geändertes Feld -> Datentyp = String
+					if(tableObj instanceof Double){
+						value.setProfit((Double)tableObj);
+						System.out.println("Es ist ein Double");
+					}
+					else 
+					*/
+					if (tableObj instanceof String){
+						
+						switch(columnCount){
+							case 2: value.setProfit(Double.parseDouble((String) tableObj));
+									break;
+							case 3: value.setSales(Double.parseDouble((String) tableObj));
+									break;
+							case 4: value.setContracts(Integer.parseInt((String) tableObj));
+									break;
+							case 5: value.setSalesDeduction(Double.parseDouble((String) tableObj));
+									break;
+							case 6: value.setInformationValue(Double.parseDouble((String) tableObj));
+									break;
+							case 7: value.setCup(Integer.parseInt((String) tableObj));
+									break;
+							case 8: value.setLoyality(Integer.parseInt((String) tableObj));
+									break;
+							case 9: value.setInvestment(Double.parseDouble((String) tableObj));
+									break;
+							case 10: value.setProfitability(Double.parseDouble((String) tableObj));
+									break;
+							case 11: value.setRoi(Double.parseDouble((String) tableObj));
+									break;
+							case 12: value.setProfitMargin(Double.parseDouble((String) tableObj));
+									break;
+							case 13: value.setScalefactor(Double.parseDouble((String) tableObj));
+									break;
+						}
+						
+						System.out.println("Es ist ein String");					
+						
+					}
+					else{
+						System.out.println("profitObj ist kein Double");
+					}
+					
+				}
+				
+			}
+		}
+		
+	}
+	
 	public void initialize() {
 		
 		workflow = new WorkflowManagerImpl();
+		listener = new ActionListenerImpl();
 		
 		setTitle("Kundendaten - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -123,8 +194,9 @@ public class CustomerDataView extends JFrame implements Controller {
 		scroller.setBounds(10, 10, 950, 500);
 		contentPane.add(scroller);
 		
-		JButton btnSpeichern = new JButton("Speichern");
+		btnSpeichern = new JButton("Speichern");
 		btnSpeichern.setBounds(427, 530, 95, 23);
+		btnSpeichern.addActionListener(listener);
 		contentPane.add(btnSpeichern);
 
 	}
@@ -141,4 +213,34 @@ public class CustomerDataView extends JFrame implements Controller {
 	public void close() {
 		this.setVisible(false);
 	}
+	
+	
+	/**
+	 * Private ActionListener-Klasse
+	 * @author Mustafa
+	 *
+	 */
+	private class ActionListenerImpl implements ActionListener{
+
+		public void actionPerformed(ActionEvent arg0) {
+			if (arg0.getSource().equals(btnSpeichern)) {
+				try {
+					updateValues();
+					workflow.updateCustomervalues(values);
+				} catch (DBException e) {
+					JOptionPane.showMessageDialog(contentPane,
+						    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
+						    "Datenbank-Fehler!",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (ValidationException e) {
+					JOptionPane.showMessageDialog(contentPane,
+						    "Es ist ein Validierungs-Fehler aufgetreten: " + e.getMessage(),
+						    "Validierungsfehler!",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			} 
+		}
+		
+	}
+	
 }
