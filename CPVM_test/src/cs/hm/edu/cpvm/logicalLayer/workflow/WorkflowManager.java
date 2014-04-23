@@ -26,10 +26,11 @@ public interface WorkflowManager {
 	/**
 	 * Validiert und speichert die Kundenwerte in die Datenbank.
 	 * @param values zu speichernde Kundenwerte.
+	 * @return gibt zurück ob  die Aktion erfolgreich war.
 	 * @throws DBException falls DB nicht verfügbar.
 	 * @throws ValidationException falls Daten nicht valide sind.
 	 */
-	public void updateCustomervalues(ArrayList<Customervalues> values) throws DBException, ValidationException;
+	public boolean updateCustomervalues(ArrayList<Customervalues> values) throws DBException, ValidationException;
 	
 	
 	/**
@@ -54,7 +55,8 @@ public interface WorkflowManager {
 	/**
 	 * Speichert die Gewichtungen der Kennzahlen in der Datenbank.
 	 * @param configs zu speichernden Gewichtungen
+	 * @return gibt zurück, ob die Aktion erfolgreich war.
 	 * @throws DBException dalls Datenbank nicht verfügbar.
 	 */
-	public void updateCustomervaluesConfigurations(ArrayList<CustomervaluesConfiguration> configs) throws DBException;
+	public boolean updateCustomervaluesConfigurations(ArrayList<CustomervaluesConfiguration> configs) throws DBException;
 }

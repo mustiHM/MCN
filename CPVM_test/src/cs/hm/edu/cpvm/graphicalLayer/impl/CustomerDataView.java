@@ -115,16 +115,8 @@ public class CustomerDataView extends JFrame implements Controller {
 				
 				for(int columnCount=2; columnCount<=8; columnCount++){
 					tableObj = (Object) model.getValueAt(i, columnCount);
-					/* wird erstmal entfernt, da nur die genäderten Felder übernommen werden sollen.
-					 * geändertes Feld -> Datentyp = String
-					if(tableObj instanceof Double){
-						value.setProfit((Double)tableObj);
-						System.out.println("Es ist ein Double");
-					}
-					else 
-					*/
 					if (tableObj instanceof String){
-						
+						// geänderte Werte haben den Datentyp String.
 						switch(columnCount){
 							case 2: value.setProfit(Double.parseDouble((String) tableObj));
 									break;
@@ -151,14 +143,7 @@ public class CustomerDataView extends JFrame implements Controller {
 							case 13: value.setScalefactor(Double.parseDouble((String) tableObj));
 									break;
 						}
-						
-						System.out.println("Es ist ein String");					
-						
 					}
-					else{
-						System.out.println("profitObj ist kein Double");
-					}
-					
 				}
 				
 			}
@@ -226,13 +211,24 @@ public class CustomerDataView extends JFrame implements Controller {
 			if (arg0.getSource().equals(btnSpeichern)) {
 				try {
 					updateValues();
-					workflow.updateCustomervalues(values);
+					boolean saved = workflow.updateCustomervalues(values);
+					if(saved){
+						JOptionPane.showMessageDialog(contentPane,
+							    "Die Daten wurden erfolgreich aktualisiert.",
+							    "Hinweis",
+							    JOptionPane.INFORMATION_MESSAGE);
+					}
 				} catch (DBException e) {
 					JOptionPane.showMessageDialog(contentPane,
 						    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
 						    "Datenbank-Fehler!",
 						    JOptionPane.ERROR_MESSAGE);
 				} catch (ValidationException e) {
+					JOptionPane.showMessageDialog(contentPane,
+						    "Es ist ein Validierungs-Fehler aufgetreten: " + e.getMessage(),
+						    "Validierungsfehler!",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (NumberFormatException e){
 					JOptionPane.showMessageDialog(contentPane,
 						    "Es ist ein Validierungs-Fehler aufgetreten: " + e.getMessage(),
 						    "Validierungsfehler!",

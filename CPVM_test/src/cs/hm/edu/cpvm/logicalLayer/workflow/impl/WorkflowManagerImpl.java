@@ -42,7 +42,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 		return allValues;
 	}
 
-	public void updateCustomervalues(ArrayList<Customervalues> allValues)
+	public boolean updateCustomervalues(ArrayList<Customervalues> allValues)
 			throws DBException, ValidationException {
 		for(int i=0; i<allValues.size();i++){
 			Customervalues values = allValues.get(i);
@@ -51,11 +51,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
 			
 			// Kundenwerte validieren
 			// momentan nicht angefordert!
-			// TODO mit echter DB nochmal prüfen
+			// TODO mit echter DB nochmal prüfen: entweder unterer Befehl updateAll oder einzeln via updateCustomer..
 			//db.updateCustomervalues(values);
 		}
 		
 		db.updateAllCustomervalues(allValues);
+		return true;
 	}
 
 	public void startCalculation() throws DBException {
@@ -110,7 +111,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 		return configurations;
 	}
 
-	public void updateCustomervaluesConfigurations(
+	public boolean updateCustomervaluesConfigurations(
 			ArrayList<CustomervaluesConfiguration> configs) throws DBException {
 		for(int i=0; i<configs.size(); i++){
 			// updaten der alten Werte
@@ -118,6 +119,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 		}
 		// neue Werte in DB speichern
 		db.updateCustomervaluesConfiguration(configurations);
+		return true;
 	}
 
 }
