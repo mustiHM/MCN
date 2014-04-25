@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.JLabel;
 
 import java.awt.Font;
@@ -38,7 +40,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	private WorkflowManager workflow;
 	private HashMap<String, Double> configs;
 	private ActionListener clickListener;
-	private KeyListener keyListener;
+	private DocumentListener docListener;
 	private JButton btnSpeichern;
 	
 	/**
@@ -51,6 +53,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	private double iw;
 	private double cup;
 	private double loyal;
+	private double total;
 
 	/**
 	 * Dient nur zu Testzwecken
@@ -95,7 +98,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	public void initialize() {
 		workflow = new WorkflowManagerImpl();
 		clickListener = new ActionListenerImpl();
-		keyListener = new KeyListenerImpl();
+		docListener = new DocumentListenerImpl();
 		
 		setTitle("Konfiguration - CPVM");
 		setBounds(700, 400, 450, 439);
@@ -115,7 +118,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		
 		txtRenta = new JTextField();
 		txtRenta.setBounds(242, 97, 86, 20);
-		txtRenta.addKeyListener(keyListener);
+		txtRenta.getDocument().addDocumentListener(docListener);
 		contentPane.add(txtRenta);
 		txtRenta.setColumns(10);
 		
@@ -125,7 +128,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		
 		txtRoi = new JTextField();
 		txtRoi.setBounds(242, 122, 86, 20);
-		txtRoi.addKeyListener(keyListener);
+		txtRoi.getDocument().addDocumentListener(docListener);
 		contentPane.add(txtRoi);
 		txtRoi.setColumns(10);
 		
@@ -135,7 +138,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		
 		txtDeckungsbeitrag = new JTextField();
 		txtDeckungsbeitrag.setBounds(242, 147, 86, 20);
-		txtDeckungsbeitrag.addKeyListener(keyListener);
+		txtDeckungsbeitrag.getDocument().addDocumentListener(docListener);
 		contentPane.add(txtDeckungsbeitrag);
 		txtDeckungsbeitrag.setColumns(10);
 		
@@ -145,7 +148,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		
 		txtSkaleneffekt = new JTextField();
 		txtSkaleneffekt.setBounds(242, 172, 86, 20);
-		txtSkaleneffekt.addKeyListener(keyListener);
+		txtSkaleneffekt.getDocument().addDocumentListener(docListener);
 		contentPane.add(txtSkaleneffekt);
 		txtSkaleneffekt.setColumns(10);
 		
@@ -155,7 +158,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		
 		txtInformationswert = new JTextField();
 		txtInformationswert.setBounds(242, 202, 86, 20);
-		txtInformationswert.addKeyListener(keyListener);
+		txtInformationswert.getDocument().addDocumentListener(docListener);
 		contentPane.add(txtInformationswert);
 		txtInformationswert.setColumns(10);
 		
@@ -165,7 +168,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		
 		txtCup = new JTextField();
 		txtCup.setBounds(242, 233, 86, 20);
-		txtCup.addKeyListener(keyListener);
+		txtCup.getDocument().addDocumentListener(docListener);
 		contentPane.add(txtCup);
 		txtCup.setColumns(10);
 		
@@ -175,7 +178,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		
 		txtLoyalitaet = new JTextField();
 		txtLoyalitaet.setBounds(242, 264, 86, 20);
-		txtLoyalitaet.addKeyListener(keyListener);
+		txtLoyalitaet.getDocument().addDocumentListener(docListener);
 		contentPane.add(txtLoyalitaet);
 		txtLoyalitaet.setColumns(10);
 		
@@ -236,39 +239,96 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		public void actionPerformed(ActionEvent arg0) {
 			
 			if(arg0.getSource() == btnSpeichern){
-				
+				if(total<100){
+					// laut Anforderung: Unter 100 soll ein Hinweis erscheinen
+					Object[] options = {"Ja", "Nein"};
+					int response = JOptionPane.showOptionDialog(contentPane,
+					    "Der Gesamtwert der Gewichtungen liegt unter 100. \nMöchten Sie die Änderungen trotzdem speichern?",
+					    "Warnung",
+					    JOptionPane.YES_NO_CANCEL_OPTION,
+					    JOptionPane.WARNING_MESSAGE,
+					    null,
+					    options,
+					    options[0]);
+					
+					if(response == 0){
+						// Klick auf "Ja"
+						saveChangings();
+					}
+						
+				}
+				else{
+					saveChangings();
+				}
 			}
 			
+		}
+		
+		private void saveChangings(){
+			try {
+				
+				configs.put("VertRenta", renta);
+				configs.put("VertROI", roi);
+				configs.put("VertDB", db);
+				configs.put("VertSkE", ske);
+				configs.put("VertIW", iw);
+				configs.put("VertCUP", cup);
+				configs.put("VertLP", loyal);
+				
+				boolean success=false;
+				success = workflow.updateCustomervaluesConfigurations(configs);
+				if(success){
+					JOptionPane.showMessageDialog(contentPane,
+						    "Die Daten wurden erfolgreich aktualisiert.",
+						    "Hinweis",
+						    JOptionPane.INFORMATION_MESSAGE);
+				}
+				else{
+					JOptionPane.showMessageDialog(contentPane,
+						    "Grenzwert überschritten oder Eingabedaten nicht korrekt. \nBitte überprüfen",
+						    "Fehler",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (DBException e) {
+				JOptionPane.showMessageDialog(contentPane,
+					    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
+					    "Datenbank-Fehler",
+					    JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 	}
 	
+	
 	/**
-	 * Private KeyListener-Klasse
+	 * Private DocumentListener-Klasse zum Reagieren auf Veränderungen bei den Textfeldern.
 	 * @author Mustafa
 	 *
 	 */
-	private class KeyListenerImpl implements KeyListener{
+	private class DocumentListenerImpl implements DocumentListener{
 
-		public void keyPressed(KeyEvent arg0) {
-			// unwichtig
+		public void changedUpdate(DocumentEvent arg0) {
+			updateTotalValue();
 		}
 
-		public void keyReleased(KeyEvent arg0) {
-			// unwichtig
+		public void insertUpdate(DocumentEvent arg0) {
+			updateTotalValue();
 		}
 
-		public void keyTyped(KeyEvent arg0) {
+		public void removeUpdate(DocumentEvent arg0) {
+			updateTotalValue();
+		}
+
+		private void updateTotalValue(){
 			try{
-				double total = calculateTotalValue();
+				total = calculateTotalValue();
 				txtTotal.setText("" + total);
-				System.out.println("Eine Taste wurde gedrückt.");
 			}catch (NumberFormatException e){
 				// Exceptions treten sicher auf, da während Änderungen der String-Wert nicht immer ein korrekter Double-Wert sein kann.
 				txtTotal.setText("...");
 			}
 		}
-		
+				
 	}
 	
 }

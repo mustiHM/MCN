@@ -1,6 +1,7 @@
 package cs.hm.edu.cpvm.logicalLayer.workflow.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
@@ -112,19 +113,22 @@ public class WorkflowManagerImpl implements WorkflowManager {
 	}
 
 	public boolean updateCustomervaluesConfigurations(
-			ArrayList<CustomervaluesConfiguration> configs) throws DBException {
+			HashMap<String, Double> configs) throws DBException {
 		double totalValue = 0;
-		for(int i=0; i<configs.size(); i++){
-			// updaten der alten Werte
-			configurations.put(configs.get(i).getCustomervalueName(), configs.get(i).getWeightingFactor());
-			totalValue = totalValue + configs.get(i).getWeightingFactor();
-		}
-		if(totalValue>100){
+		
+		totalValue = configs.get("VertRenta")+configs.get("VertROI")+configs.get("VertDB")
+				+configs.get("VertSkE")+configs.get("VertIW")+configs.get("VertCUP")+configs.get("VertLP");
+		if(totalValue>100.00){
 			return false;
 		}
-		// neue Werte in DB speichern
-		db.updateCustomervaluesConfiguration(configurations);
-		return true;
+		else{
+			configurations.putAll(configs);
+			
+			// neue Werte in DB speichern
+			db.updateCustomervaluesConfiguration(configurations);
+			return true;	
+		}
+		
 	}
 
 }
