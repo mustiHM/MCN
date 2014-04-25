@@ -56,6 +56,9 @@ public class CustomerDataView extends JFrame implements Controller {
 		});
 	}
 
+	/**
+	 * Lädt die Inhalte nochmal neu vom Workflow Manager und aktualisiert die Tabelle
+	 */
 	private void synchronizeData(){
 		try {
 			values = workflow.getCustomervalues();

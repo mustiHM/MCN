@@ -113,9 +113,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
 	public boolean updateCustomervaluesConfigurations(
 			ArrayList<CustomervaluesConfiguration> configs) throws DBException {
+		double totalValue = 0;
 		for(int i=0; i<configs.size(); i++){
 			// updaten der alten Werte
 			configurations.put(configs.get(i).getCustomervalueName(), configs.get(i).getWeightingFactor());
+			totalValue = totalValue + configs.get(i).getWeightingFactor();
+		}
+		if(totalValue>100){
+			return false;
 		}
 		// neue Werte in DB speichern
 		db.updateCustomervaluesConfiguration(configurations);

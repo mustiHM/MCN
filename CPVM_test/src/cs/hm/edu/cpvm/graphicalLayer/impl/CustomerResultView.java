@@ -142,6 +142,7 @@ public class CustomerResultView extends JFrame implements Controller {
 
 		btnProtokoll = new JButton("Protokoll anzeigen");
 		btnProtokoll.setBounds(210, 530, 150, 23);
+		btnProtokoll.addActionListener(listener);
 		contentPane.add(btnProtokoll);
 		
 	}
@@ -168,16 +169,27 @@ public class CustomerResultView extends JFrame implements Controller {
 	private class ActionListenerImpl implements ActionListener{
 
 		public void actionPerformed(ActionEvent arg0) {
-			if (arg0.getSource().equals(btnCalculationDoc)) {
+			if (arg0.getSource().equals(btnProtokoll)) {
 				try {
-					Desktop.getDesktop().open(new File("files/Formelschema_mit_Beispielberechnung.pdf"));
+					Desktop.getDesktop().open(new File("logs/cpvn_gui.log"));
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(contentPane,
 						    "Es ist ein Fehler beim Öffnen der PDF-Datei aufgetreten: " + e1.getMessage(),
 						    "Datei-Fehler!",
 						    JOptionPane.ERROR_MESSAGE);
 				}
-			} 
+			}
+			
+			else if(arg0.getSource().equals(btnCalculationDoc)){
+				try {
+					Desktop.getDesktop().open(new File("files/Formelschema_mit_Beispielberechnung.pdf"));
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(contentPane,
+						    "Es ist ein Fehler beim Öffnen des Log-Files aufgetreten: " + e1.getMessage(),
+						    "Datei-Fehler!",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		}
 		
 	}

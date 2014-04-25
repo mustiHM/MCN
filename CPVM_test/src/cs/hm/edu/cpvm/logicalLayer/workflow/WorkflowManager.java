@@ -55,7 +55,7 @@ public interface WorkflowManager {
 	/**
 	 * Speichert die Gewichtungen der Kennzahlen in der Datenbank.
 	 * @param configs zu speichernden Gewichtungen
-	 * @return gibt zurück, ob die Aktion erfolgreich war.
+	 * @return gibt zurück, ob die Aktion erfolgreich war oder ob der Grenzwert 100 überschritten wurde.
 	 * @throws DBException dalls Datenbank nicht verfügbar.
 	 */
 	public boolean updateCustomervaluesConfigurations(ArrayList<CustomervaluesConfiguration> configs) throws DBException;
