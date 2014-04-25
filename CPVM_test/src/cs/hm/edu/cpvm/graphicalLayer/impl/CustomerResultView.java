@@ -100,7 +100,7 @@ public class CustomerResultView extends JFrame implements Controller {
 		workflow = new WorkflowManagerImpl();
 		listener = new ActionListenerImpl();
 		
-		setTitle("Kundenergebnisse - CPVM");
+		setTitle("Kundenergebnisse anzeigen - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(705, 200, 435, 600);
 		setResizable(false);

@@ -159,7 +159,7 @@ public class CustomerDataView extends JFrame implements Controller {
 		workflow = new WorkflowManagerImpl();
 		listener = new ActionListenerImpl();
 		
-		setTitle("Kundendaten - CPVM");
+		setTitle("Kundendaten anzeigen/bearbeiten - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(400, 200, 975, 600);
 		setResizable(false);

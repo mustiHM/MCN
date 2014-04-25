@@ -63,7 +63,8 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 			public void run() {
 				try {
 					CustomerValuesConfigurationView frame = new CustomerValuesConfigurationView();
-					frame.setVisible(true);
+					frame.initialize();
+					frame.display();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -100,7 +101,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		clickListener = new ActionListenerImpl();
 		docListener = new DocumentListenerImpl();
 		
-		setTitle("Konfiguration - CPVM");
+		setTitle("Gewichtungsfaktoren editieren - CPVM");
 		setBounds(700, 400, 450, 439);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
