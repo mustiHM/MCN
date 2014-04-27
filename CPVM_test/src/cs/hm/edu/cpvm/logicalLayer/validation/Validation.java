@@ -7,8 +7,7 @@ import cs.hm.edu.cpvm.common.models.Customervalues;
 
 /**
  * Bietet Dienste zum Validieren von Datenfeldern an.
- * Im Prototyp wird nur das Datenformat validiert, deshalb werden nur die Methoden validateDouble und validateInt implementiert.
- * Zukünftig könnten hier noch weitere Methoden wie validateProfit etc. integriert werden.
+ * Da keine Anforderungen zu gewünschten Valdierungen erstellt wurden, wird dieses Interface im Rahmen des Prototyps nicht implementiert.
  * @author Mustafa
  *
  */

@@ -35,7 +35,8 @@ public class WaitingView extends JFrame implements Controller{
 			public void run() {
 				try {
 					WaitingView frame = new WaitingView();
-					frame.setVisible(true);
+					frame.initialize();
+					frame.display();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -113,8 +114,10 @@ public class WaitingView extends JFrame implements Controller{
 				try {
 					sleep(2000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(contentPane,
+						    "Ein unerwarteter Fehler ist aufgetreten: " + e.getMessage(),
+						    "Fehler",
+						    JOptionPane.ERROR_MESSAGE);
 				}
 			}while(!workflow.isCalculationDone());
 			
