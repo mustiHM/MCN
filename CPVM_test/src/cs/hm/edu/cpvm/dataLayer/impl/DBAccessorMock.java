@@ -1,9 +1,11 @@
 package cs.hm.edu.cpvm.dataLayer.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
+import cs.hm.edu.cpvm.common.models.CalculationLogging;
 import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.dataLayer.DBAccessor;
@@ -19,6 +21,8 @@ public class DBAccessorMock implements DBAccessor {
 	private static HashMap<String, Double> configs;
 	private static ArrayList<Customerdata> allData;
 	private static boolean isinitialized = false;
+	private static CalculationLogging log;
+	private StringBuilder protocol;
 	
 	@Override
 	public void updateCustomerdata(Customerdata customer) throws DBException {
@@ -73,6 +77,25 @@ public class DBAccessorMock implements DBAccessor {
 			HashMap<String, Double> configurations) throws DBException {
 		configs.putAll(configurations);
 	}
+	
+	public CalculationLogging getLastCalculationLogging() throws DBException {
+		
+		return log;
+	}
+
+	@Override
+	public void saveCalculationLogs(ArrayList<String> logs) throws DBException {
+
+		protocol = new StringBuilder();
+		for(int i=0; i<logs.size(); i++){
+			protocol.append("\n" + logs.get(i));
+		}
+		
+		log.setLoggingDate(new Timestamp(System.currentTimeMillis()));
+		log.setLogMessage(protocol.toString());
+		
+	}
+	
 	
 	public DBAccessorMock(){
 		
@@ -191,11 +214,12 @@ public class DBAccessorMock implements DBAccessor {
 			configs.put("VertCUP", 14.0);
 			configs.put("VertLP", 12.0);
 			
+			log = new CalculationLogging();
+			log.setId(1);
+			
 			isinitialized = true;
 		}
 		
-		
 	}
 
-	
 }

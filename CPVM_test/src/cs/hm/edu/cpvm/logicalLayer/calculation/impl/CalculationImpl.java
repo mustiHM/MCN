@@ -55,6 +55,7 @@ public class CalculationImpl extends Thread implements Calculation{
 	private Customervalues values; // die einzelnen Kundenwerte eines Kundens.
 	private HashMap<String, Double> config; // die Gewichtungsfaktoren
 	private boolean isCalculationDone; // Flag zum Status der Berechnung eines Kundens (für die gesamten Berechnungen)
+	private StringBuilder protocol;
 	
 	
 	/**
@@ -323,11 +324,17 @@ public class CalculationImpl extends Thread implements Calculation{
 		return isCalculationDone;
 	}
 	
+	public String getProtocol(){
+		return protocol.toString();
+	}
+	
 	public void run(){
 		
 		isCalculationDone = false;
-		
+		protocol = new StringBuilder();
 		this.setName("Berechnung_" + values.getCustomerdata().getFirstName() +"_" + values.getCustomerdata().getLastName());
+		
+		protocol.append("\n* Berechnung für Kunden " + values.getCustomerdata().getFirstName() + " " + values.getCustomerdata().getLastName() + " gestartet *");
 		log.debug("Berechnung für Kunden " + values.getCustomerdata().getFirstName() + " " + values.getCustomerdata().getLastName() + " gestartet...");
 		
 		// alle Kennzahlen werden jetzt einzeln berechnet und gespeichert
@@ -375,8 +382,10 @@ public class CalculationImpl extends Thread implements Calculation{
 	private double calculateInvestment(){
 		// Formel: (Umsatz – Gewinn) * Investitionssatz
 		double investitionsSatz = config.get("Investitionssatz");
+		protocol.append("\n\n" + "Berechne Investition in Euro mit den Parametern: Gewinn = " + values.getProfit() + "; Umsatz = " + values.getSales() + "; Investitionssatz = " + investitionsSatz);
 		log.debug("Berechne Investition in Euro mit den Parametern: Gewinn = " + values.getProfit() + "; Umsatz = " + values.getSales() + "; Investitionssatz = " + investitionsSatz);
 		double investition = (values.getSales()-values.getProfit())*investitionsSatz;
+		protocol.append("\n" + "Investition in Euro beträgt: " + investition);
 		log.debug("Investition in Euro beträgt: " + investition);
 		return investition;
 		
@@ -388,8 +397,10 @@ public class CalculationImpl extends Thread implements Calculation{
 	 */
 	private double calculateProfitability(){
 		// Formel: Gewinn * 100 / Umsatz
+		protocol.append("\n" + "Berechne Rentabilität in % mit den Parametern: Gewinn = " + values.getProfit() + "; Umsatz = " + values.getSales());
 		log.debug("Berechne Rentabilität in % mit den Parametern: Gewinn = " + values.getProfit() + "; Umsatz = " + values.getSales());
 		double profitability = values.getProfit()*100/values.getSales();
+		protocol.append("\n" + "Rentabilität in % beträgt: " + profitability);
 		log.debug("Rentabilität in % beträgt: " + profitability);
 		return profitability;
 	}
@@ -400,8 +411,10 @@ public class CalculationImpl extends Thread implements Calculation{
 	 */
 	private double calculateROI(){
 		// Formel: Gewinn * 100 / Investition
+		protocol.append("\n" + "Berechne ROI in % mit den Parametern: Gewinn = " + values.getProfit() + "; Investition = " + values.getInvestment());
 		log.debug("Berechne ROI in % mit den Parametern: Gewinn = " + values.getProfit() + "; Investition = " + values.getInvestment());
 		double roi = values.getProfit()*100/values.getInvestment();
+		protocol.append("\n" + "ROI in % beträgt: " + roi);
 		log.debug("ROI in % beträgt: " + roi);
 		return roi;
 				
@@ -414,8 +427,10 @@ public class CalculationImpl extends Thread implements Calculation{
 	private double calculateProfitMargin(){
 		// Formel: Umsatz * DBU-Faktor
 		double dbuFaktor = config.get("DBU-Faktor");
+		protocol.append("\n" + "Berechne Deckungsbeitrag mit den Parametern: Umsatz = " + values.getSales() + "; DBU-Faktor = " + dbuFaktor);
 		log.debug("Berechne Deckungsbeitrag mit den Parametern: Umsatz = " + values.getSales() + "; DBU-Faktor = " + dbuFaktor);
 		double profitMargin = values.getSales()*dbuFaktor;
+		protocol.append("\n" + "Deckungsbeitrag beträgt: " + profitMargin);
 		log.debug("Deckungsbeitrag beträgt: " + profitMargin);
 		return profitMargin;
 	}
@@ -427,8 +442,10 @@ public class CalculationImpl extends Thread implements Calculation{
 	private double calculateScalefactor(){
 		// Formel: Summe (Verträge in Stück - 1) * Investitionssatz
 		double investitionsSatz = config.get("Investitionssatz");
+		protocol.append("\n" + "Berechne Skaleneffekt mit den Parametern: Verträge in Stück = " + values.getContracts() + "; Investitionssatz = " + investitionsSatz);
 		log.debug("Berechne Skaleneffekt mit den Parametern: Verträge in Stück = " + values.getContracts() + "; Investitionssatz = " + investitionsSatz);
 		double scalefactor = (values.getContracts()-1)*investitionsSatz;
+		protocol.append("\n" + "Skaleneffekt beträgt: " + scalefactor);
 		log.debug("Skaleneffekt beträgt: " + scalefactor);
 		return scalefactor;
 	}
@@ -446,6 +463,11 @@ public class CalculationImpl extends Thread implements Calculation{
 		double gewLP = config.get("GewLP");
 		double gewIW = config.get("GewIW");
 		double gewSkE = config.get("GewSkE");
+		protocol.append("\n" + "Berechne gewichteten Kundenwert 1 mit den Parametern: Rentabilität = " + values.getProfitability() + "; Gewichtungsfaktor für Rentabilität = " + gewRenta
+				+ "; ROI = " + values.getRoi() + "; Gewichtungsfaktor für ROI = " + gewROI + "; Deckungsbeitrag = " + values.getProfitMargin() + "; Gewichtungsfaktor für Deckungsbeitrag = " + gewDB
+				+ "; Cross-/Up-Buying Potenzial = " + values.getCup() + "; Gewichtungsfaktor für Cross-/Up-Buying Potenzial = " + gewCUP + "; Loyalitätspotenzial = " + values.getLoyality()
+				+ "Gewichtungsfaktor für Loyalitätspotenzial = " + gewLP + "; Informationswert = " + values.getInformationValue() + "; Gewichtungsfaktor für Informationswert = " + gewIW
+				+ "; Skaleneffekt = " + values.getScalefactor() + "; Gewichtungsfaktor für Skaleneffekt = " + gewSkE);
 		log.debug("Berechne gewichteten Kundenwert 1 mit den Parametern: Rentabilität = " + values.getProfitability() + "; Gewichtungsfaktor für Rentabilität = " + gewRenta
 				+ "; ROI = " + values.getRoi() + "; Gewichtungsfaktor für ROI = " + gewROI + "; Deckungsbeitrag = " + values.getProfitMargin() + "; Gewichtungsfaktor für Deckungsbeitrag = " + gewDB
 				+ "; Cross-/Up-Buying Potenzial = " + values.getCup() + "; Gewichtungsfaktor für Cross-/Up-Buying Potenzial = " + gewCUP + "; Loyalitätspotenzial = " + values.getLoyality()
@@ -453,6 +475,7 @@ public class CalculationImpl extends Thread implements Calculation{
 				+ "; Skaleneffekt = " + values.getScalefactor() + "; Gewichtungsfaktor für Skaleneffekt = " + gewSkE);
 		double customerresult1 = (values.getProfitability()*gewRenta)+(values.getRoi()*gewROI)+(values.getProfitMargin()*gewDB)+(values.getCup()*gewCUP)+(values.getLoyality()*gewLP)
 				+(values.getInformationValue()*gewIW)+(values.getScalefactor()*gewSkE);
+		protocol.append("\n" + "Gewichteter Kundenwert1 beträgt: " + customerresult1);
 		log.debug("Gewichteter Kundenwert1 beträgt: " + customerresult1);
 		return customerresult1;
 	}
@@ -463,40 +486,55 @@ public class CalculationImpl extends Thread implements Calculation{
 	 */
 	private double calculateCustomerValueResult2(){
 		// Formel: Summe (VertRenta * Wert Renta; VertROI * Wert ROI; VertDB * Wert DB; VertSkE * Wert SkE; VertIW * Wert IW; VertCUP * Wert CUP; VertLP * Wert LP)
+		protocol.append("\n" + "Berechne standartisierten Wert für Rentabilität mit den Parametern: Rentabilität = " + values.getProfitability() + "; Mittelwert Rentabilität = " + meanRenta + 
+				"; Stand.Abw. Rentabilität = " + stabwRenta);
 		log.debug("Berechne standartisierten Wert für Rentabilität mit den Parametern: Rentabilität = " + values.getProfitability() + "; Mittelwert Rentabilität = " + meanRenta + 
 				"; Stand.Abw. Rentabilität = " + stabwRenta);
 		double wertRenta = (values.getProfitability()-meanRenta)/stabwRenta;
+		protocol.append("\n" + "standartisierter Wert für Rentabilität beträgt: " + wertRenta);
 		log.debug("standartisierter Wert für Rentabilität beträgt: " + wertRenta);
-		
+		protocol.append("\n" + "Berechne standartisierten Wert für ROI mit den Parametern: ROI = " + values.getRoi() + "; Mittelwert ROI = " + meanROI + 
+				"; Stand.Abw. ROI = " + stabwROI);
 		log.debug("Berechne standartisierten Wert für ROI mit den Parametern: ROI = " + values.getRoi() + "; Mittelwert ROI = " + meanROI + 
 				"; Stand.Abw. ROI = " + stabwROI);
 		double wertRoi = (values.getRoi()-meanROI)/stabwROI;
+		protocol.append("\n" + "standartisierter Wert für Rentabilität beträgt: " + wertRoi);
 		log.debug("standartisierter Wert für Rentabilität beträgt: " + wertRoi);
-		
+		protocol.append("\n" + "Berechne standartisierten Wert für DB mit den Parametern: DB = " + values.getProfitMargin() + "; Mittelwert DB = " + meanDB + 
+				"; Stand.Abw. DB = " + stabwDB);
 		log.debug("Berechne standartisierten Wert für DB mit den Parametern: DB = " + values.getProfitMargin() + "; Mittelwert DB = " + meanDB + 
 				"; Stand.Abw. DB = " + stabwDB);
 		double wertDB = (values.getProfitMargin()-meanDB)/stabwDB;
+		protocol.append("\n" + "standartisierter Wert für DB beträgt: " + wertDB);
 		log.debug("standartisierter Wert für DB beträgt: " + wertDB);
-		
+		protocol.append("\n" + "Berechne standartisierten Wert für Skaleneffekt mit den Parametern: SkE = " + values.getScalefactor() + "; Mittelwert SkE = " + meanSke + 
+				"; Stand.Abw. SkE = " + stabwSkE);
 		log.debug("Berechne standartisierten Wert für Skaleneffekt mit den Parametern: SkE = " + values.getScalefactor() + "; Mittelwert SkE = " + meanSke + 
 				"; Stand.Abw. SkE = " + stabwSkE);
 		double wertSkE = (values.getScalefactor()-meanSke)/stabwSkE;
+		protocol.append("\n" + "standartisierter Wert für Skaleneffekt beträgt: " + wertSkE);
 		log.debug("standartisierter Wert für Skaleneffekt beträgt: " + wertSkE);
-		
+		protocol.append("\n" + "Berechne standartisierten Wert für Informationswert mit den Parametern: Informationswert = " + values.getInformationValue() + "; Mittelwert Informationswert = " + meanIW + 
+				"; Stand.Abw. Informationswert = " + stabwIW);
 		log.debug("Berechne standartisierten Wert für Informationswert mit den Parametern: Informationswert = " + values.getInformationValue() + "; Mittelwert Informationswert = " + meanIW + 
 				"; Stand.Abw. Informationswert = " + stabwIW);
 		double wertIW = (values.getInformationValue()-meanIW)/stabwIW;
+		protocol.append("\n" + "standartisierter Wert für Informationswert beträgt: " + wertIW);
 		log.debug("standartisierter Wert für Informationswert beträgt: " + wertIW);
-		
+		protocol.append("\n" + "Berechne standartisierten Wert für Cross-/Up-Potenzial mit den Parametern: Cross-/Up-Potenzial = " + values.getCup() + "; Mittelwert Cross-/Up-Potenzial = " + meanCUP + 
+				"; Stand.Abw. Cross-/Up-Potenzial = " + stabwCUP);
 		log.debug("Berechne standartisierten Wert für Cross-/Up-Potenzial mit den Parametern: Cross-/Up-Potenzial = " + values.getCup() + "; Mittelwert Cross-/Up-Potenzial = " + meanCUP + 
 				"; Stand.Abw. Cross-/Up-Potenzial = " + stabwCUP);
 		double wertCUP = (values.getCup()-meanCUP)/stabwCUP;
+		protocol.append("\n" + "standartisierter Wert für Cross-/Up-Potenzial beträgt: " + wertCUP);
 		log.debug("standartisierter Wert für Cross-/Up-Potenzial beträgt: " + wertCUP);
 		
-		
+		protocol.append("\n" + "Berechne standartisierten Wert für Loyalitätspotenzial mit den Parametern: Loyalitätspotenzial = " + values.getLoyality() + "; Mittelwert Loyalitätspotenzial = " + meanLP + 
+				"; Stand.Abw. Loyalitätspotenzial = " + stabwLP);
 		log.debug("Berechne standartisierten Wert für Loyalitätspotenzial mit den Parametern: Loyalitätspotenzial = " + values.getLoyality() + "; Mittelwert Loyalitätspotenzial = " + meanLP + 
 				"; Stand.Abw. Loyalitätspotenzial = " + stabwLP);
 		double wertLP = (values.getLoyality()-meanLP)/stabwLP;
+		protocol.append("\n" + "standartisierter Wert für Loyalitätspotenzial beträgt: " + wertLP);
 		log.debug("standartisierter Wert für Loyalitätspotenzial beträgt: " + wertLP);
 		
 		
@@ -508,11 +546,18 @@ public class CalculationImpl extends Thread implements Calculation{
 		double vertCUP = config.get("VertCUP");
 		double vertLP = config.get("VertLP");
 		
+		protocol.append("\n" + "Berechne gewichteten Kundenwert 2 mit den Parametern: Verteilung Rentabilität = " + vertRenta + "; standartisierte Rentabilität = " + wertRenta + 
+				"; Verteilung ROI = " + vertROI + "; standartisierter ROI = " + wertRoi + "; Verteilung Deckungsbeitrag = " + vertDB + "; standartisierter Deckungsbeitrag = " + wertDB + "; Verteilung Skaleneffekt = " + vertSkE +
+				"; standartisierter Skaleneffekt = " + wertSkE + "; Verteilung Informationswert = " + vertIW + "; standartisierter Informationswert = " + wertIW + "; Verteilung Cross-/Up-Potential = " + vertCUP + 
+				"; standartisiertes Cross-/Up-Potential = " + wertCUP + "; Verteilung Loyalitätspotenzial = " + vertLP + "; standartisiertes Loyalitätspotenzial = " + wertLP);
 		log.debug("Berechne gewichteten Kundenwert 2 mit den Parametern: Verteilung Rentabilität = " + vertRenta + "; standartisierte Rentabilität = " + wertRenta + 
-				"; Verteilung ROI = " + vertROI + "; standartisierter ROI = " + wertRoi + "; Verteilung Deckungsbeitrag = " + vertDB + "; standartisierter Deckungsbeitrag = " + wertDB + "und bla bla");
+				"; Verteilung ROI = " + vertROI + "; standartisierter ROI = " + wertRoi + "; Verteilung Deckungsbeitrag = " + vertDB + "; standartisierter Deckungsbeitrag = " + wertDB + "; Verteilung Skaleneffekt = " + vertSkE +
+				"; standartisierter Skaleneffekt = " + wertSkE + "; Verteilung Informationswert = " + vertIW + "; standartisierter Informationswert = " + wertIW + "; Verteilung Cross-/Up-Potential = " + vertCUP + 
+				"; standartisiertes Cross-/Up-Potential = " + wertCUP + "; Verteilung Loyalitätspotenzial = " + vertLP + "; standartisiertes Loyalitätspotenzial = " + wertLP);
 		double customerresult2 = (vertRenta*wertRenta)+(vertROI*wertRoi)+(vertDB*wertDB)+(vertSkE*wertSkE)+(vertIW*wertIW)+(vertCUP*wertCUP)+(vertLP*wertLP);
+		protocol.append("\n" + "Gewichteter Kundenwert2 beträgt: " + customerresult2);
 		log.debug("Gewichteter Kundenwert2 beträgt: " + customerresult2);
-		
+		protocol.append("\n-----------------------------------------------------------------------------------------------------------------------------------------------");
 		
 		return customerresult2;
 	}

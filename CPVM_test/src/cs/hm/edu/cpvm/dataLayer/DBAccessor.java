@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
+import cs.hm.edu.cpvm.common.models.CalculationLogging;
 import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
@@ -72,5 +73,20 @@ public interface DBAccessor {
 	 */
 	public void updateCustomervaluesConfiguration(HashMap<String, Double> configurations) throws DBException;
 	
+	/**
+	 * Gibt das letzte Protokoll der zu letzt durchgeführten Berechnung durch.
+	 * @return Protokoll der letzten Berechnung
+	 * @throws DBException falls Datenbank nicht verfügbar
+	 */
+	public CalculationLogging getLastCalculationLogging() throws DBException;
+	
+	/**
+	 * Speichert die Protokoll-Einträge der Berechnungs-Threads in die Datenbank. 
+	 * Alle Einträge werden in einem zusammenhängenden Eintrag zusammengefasst.
+	 * Hierbei wird die ID und der Timestamp von der Datenbank selbst gesetzt.
+	 * @param logs Liste aller Einträge
+	 * @throws DBException Exception, falls Datenbank nicht verfügbar.
+	 */
+	public void saveCalculationLogs(ArrayList<String> logs) throws DBException;
 	
 }

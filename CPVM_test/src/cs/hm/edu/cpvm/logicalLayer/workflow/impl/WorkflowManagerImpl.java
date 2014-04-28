@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
 import cs.hm.edu.cpvm.common.exceptions.ValidationException;
+import cs.hm.edu.cpvm.common.models.CalculationLogging;
 import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
@@ -28,6 +29,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
 	private Validation validation;
 	private ArrayList<Customervalues> allValues;
 	private HashMap<String, Double> configurations;
+	private ArrayList<String> protocol;
+	private ArrayList<CalculationImpl> calculationThreads;
 	
 	private static boolean isCalculationDone;
 	
@@ -62,7 +65,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
 	public void startCalculation() throws DBException {
 		isCalculationDone = false;
-		
+		protocol = new ArrayList<String>();
+		calculationThreads = new ArrayList<CalculationImpl>();
 		allValues = db.getAllCustomervalues();
 		HashMap<String, Double> config = db.getAllCustomervaluesConfigurations();
 		CalculationImpl.setAllCustomervalues(allValues);
@@ -73,6 +77,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 			calculation.setCustomervalues(allValues.get(i));
 			calculation.setCustomervaluesConfigurations(config);
 			calculation.start();
+			calculationThreads.add(calculation);
 		}
 		
 		while(CalculationImpl.getNumberOfWaitingThreads()!=allValues.size()){
@@ -95,6 +100,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
 		
 		// speichern in DB
 		db.updateAllCustomervalues(allValues);
+		
+		// logs holen
+		for(int i=0; i<calculationThreads.size();i++){
+			protocol.add(calculationThreads.get(i).getProtocol());
+		}
+		
+		db.saveCalculationLogs(protocol);
 		
 		isCalculationDone = true;
 		
@@ -129,6 +141,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
 			return true;	
 		}
 		
+	}
+
+	@Override
+	public CalculationLogging getLastCalculationLogging() throws DBException {
+		return db.getLastCalculationLogging();
 	}
 
 }

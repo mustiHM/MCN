@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
+import cs.hm.edu.cpvm.common.models.CalculationLogging;
 import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.dataLayer.DBAccessor;
@@ -80,6 +81,18 @@ public class DBAccessorImpl implements DBAccessor {
 			HashMap<String, Double> configurations) throws DBException {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public CalculationLogging getLastCalculationLogging() throws DBException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveCalculationLogs(ArrayList<String> logs) throws DBException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -34,6 +34,11 @@ public interface Calculation {
 	 */
 	public boolean isCalculationDone() throws DBException;
 	
+	/**
+	 * Gibt das fertige Protokoll zu einem Kunden und seinen Berechnungen zurück.
+	 * @return Protokoll eines Kundens.
+	 */
+	public String getProtocol();
 	
 	
 }

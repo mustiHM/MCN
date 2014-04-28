@@ -35,6 +35,7 @@ public class CustomerResultView extends JFrame implements Controller {
 	private JButton btnCalculationDoc;
 	private JButton btnProtokoll;
 	private ActionListener listener;
+	private Controller protocolView;
 
 	/**
 	 * Nur zu Testzwecken
@@ -99,6 +100,8 @@ public class CustomerResultView extends JFrame implements Controller {
 	public void initialize() {
 		workflow = new WorkflowManagerImpl();
 		listener = new ActionListenerImpl();
+		protocolView = new ProtocolView();
+		protocolView.initialize();
 		
 		setTitle("Kundenergebnisse anzeigen - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -170,14 +173,7 @@ public class CustomerResultView extends JFrame implements Controller {
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (arg0.getSource().equals(btnProtokoll)) {
-				try {
-					Desktop.getDesktop().open(new File("logs/cpvn_gui.log"));
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(contentPane,
-						    "Es ist ein Fehler beim Öffnen der PDF-Datei aufgetreten: " + e1.getMessage(),
-						    "Datei-Fehler!",
-						    JOptionPane.ERROR_MESSAGE);
-				}
+				protocolView.display();
 			}
 			
 			else if(arg0.getSource().equals(btnCalculationDoc)){

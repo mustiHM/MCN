@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import cs.hm.edu.cpvm.common.exceptions.DBException;
 import cs.hm.edu.cpvm.common.exceptions.ValidationException;
+import cs.hm.edu.cpvm.common.models.CalculationLogging;
 import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
@@ -56,7 +57,14 @@ public interface WorkflowManager {
 	 * Speichert die Gewichtungen der Kennzahlen in der Datenbank.
 	 * @param configs zu speichernde Gewichtungen
 	 * @return gibt zurück, ob die Aktion erfolgreich war oder ob der Grenzwert 100 überschritten wurde.
-	 * @throws DBException dalls Datenbank nicht verfügbar.
+	 * @throws DBException falls Datenbank nicht verfügbar.
 	 */
 	public boolean updateCustomervaluesConfigurations(HashMap<String, Double> configs) throws DBException;
+	
+	/**
+	 * Gibt das letzte Protokoll der zu letzt durchgeführten Berechnung durch.
+	 * @return Protokoll der letzten Berechnung
+	 * @throws DBException falls Datenbank nicht verfügbar
+	 */
+	public CalculationLogging getLastCalculationLogging() throws DBException;
 }
