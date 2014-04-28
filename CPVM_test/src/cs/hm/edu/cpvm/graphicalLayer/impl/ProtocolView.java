@@ -37,8 +37,7 @@ public class ProtocolView extends JFrame implements Controller {
 	private JPanel contentPane;
 	private JTextArea protocollField;
 	private CalculationLogging protocol;
-	private String timestamp;
-	
+	private JLabel title;
 
 	/**
 	 * Dient nur zu Testzwecken.
@@ -63,6 +62,7 @@ public class ProtocolView extends JFrame implements Controller {
 	private void synchronizeData(){
 		try {
 			protocol = workflow.getLastCalculationLogging();
+			title.setText("Protokoll vom " + protocol.getLoggingDate());
 			protocollField.setText(protocol.getLogMessage());
 		} catch (DBException e) {
 			JOptionPane.showMessageDialog(this,
@@ -89,7 +89,7 @@ public class ProtocolView extends JFrame implements Controller {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel title = new JLabel("Protokoll vom Dadada");
+		title = new JLabel("Protokoll");
 		title.setBounds(10, 10, 250, 20);
 		contentPane.add(title);
 		

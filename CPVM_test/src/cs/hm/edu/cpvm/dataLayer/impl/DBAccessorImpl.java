@@ -19,15 +19,23 @@ public class DBAccessorImpl implements DBAccessor {
 	private String dbName;
 	private String dbUser;
 	private String dbPassword;
+	private boolean isConnected=false;
 	
+	/**
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private void connect() throws FileNotFoundException, IOException{
-		Properties p = new Properties();
-		p.load(new FileInputStream("conf/db.properties"));
-		dbUrl = p.getProperty("dbAddress");
-		dbName = p.getProperty("dbName");
-		dbUser = p.getProperty("dbUser");
-		dbPassword = p.getProperty("dbPassword");
-		
+		if(!isConnected){
+			Properties p = new Properties();
+			p.load(new FileInputStream("conf/db.properties"));
+			dbUrl = p.getProperty("dbAddress");
+			dbName = p.getProperty("dbName");
+			dbUser = p.getProperty("dbUser");
+			dbPassword = p.getProperty("dbPassword");
+			isConnected = true;
+		}
 		
 	}
 	
