@@ -10,10 +10,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+
+
+
+
 
 
 
@@ -37,6 +46,14 @@ public class DBAccessorImpl implements DBAccessor {
 	private String dbPassword;
 	private boolean isConnected=false;
 	private Connection dbConnection;
+	
+	public DBAccessorImpl() throws DBException{
+		try {
+			connect();
+		} catch (Exception e) {
+			throw new DBException(e);
+		}
+	}
 	
 	/**
 	 * Überprüft erst ob eine Datenbank-Verbindung besteht und verbindet sich anschließend mit dieser.
@@ -106,8 +123,8 @@ public class DBAccessorImpl implements DBAccessor {
 				 customervalues.setLoyality(rset.getInt("Loyality"));
 				 customervalues.setCalculationDate(""+rset.getTimestamp("CalculationDate"));
 				 customervalues.setCustomerValueResult1(rset.getDouble("CustomerValueResult1"));
-				 customervalues.setCustomerValueResult1(rset.getDouble("CustomerValueResult2"));
-				 
+				 customervalues.setCustomerValueResult2(rset.getDouble("CustomerValueResult2"));
+				 allCustomervalues.add(customervalues);
 			 }
 		} catch (SQLException e) {
 			throw new DBException(e);
@@ -119,10 +136,12 @@ public class DBAccessorImpl implements DBAccessor {
 	public void updateAllCustomervalues(ArrayList<Customervalues> values)
 			throws DBException {
 		try {
-			PreparedStatement pstmt = dbConnection.prepareStatement("UPDATE CUSTOMERVALUES SET PROFIT = ?, SALES = ?, CONTRACTS = ?, SALESDEDUCTION = ?, INFORMATIONVALUE = ?, CUP = ?, ROI = ?, PROFITABILITY = ?, PROFITMARGIN = ?, INVESTMENT = ?"
-					+ ", SCALEFACTOR = ?, LOYALITY = ?, CALCULATIONDATE = ?, CUSTOMERVALUERESULT1 = ?, CUSTOMERVALUERESULT2 = ? WHERE ID = ?");
 			
 			for(int i=0; i<values.size(); i++){
+				PreparedStatement pstmt = dbConnection.prepareStatement("UPDATE CUSTOMERVALUES SET PROFIT = ?, SALES = ?, CONTRACTS = ?, SALESDEDUCTION = ?, INFORMATIONVALUE = ?, CUP = ?, ROI = ?, PROFITABILITY = ?, PROFITMARGIN = ?, INVESTMENT = ?"
+						+ ", SCALEFACTOR = ?, LOYALITY = ?, CALCULATIONDATE = ?, CUSTOMERVALUERESULT1 = ?, CUSTOMERVALUERESULT2 = ? WHERE ID = ?");
+				
+				
 				Customervalues customer = values.get(i);
 				pstmt.setDouble(1, customer.getProfit());
 				pstmt.setDouble(2, customer.getSales());
@@ -136,11 +155,19 @@ public class DBAccessorImpl implements DBAccessor {
 				pstmt.setDouble(10, customer.getInvestment());
 				pstmt.setDouble(11, customer.getScalefactor());
 				pstmt.setDouble(12, customer.getLoyality());
-				pstmt.setTimestamp(13, new Timestamp(Long.parseLong(customer.getCalculationDate())));
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.S");
+				Date parsedDate = null;
+				try {
+					parsedDate = df.parse(customer.getCalculationDate());
+				} catch (ParseException e) {
+					throw new DBException(e);
+				}
+				pstmt.setTimestamp(13, new Timestamp(parsedDate.getTime()));
 				pstmt.setDouble(14, customer.getCustomerValueResult1());
 				pstmt.setDouble(15, customer.getCustomerValueResult2());
 				pstmt.setInt(16, customer.getId());
 				pstmt.executeUpdate();
+				
 			}
 		} catch (SQLException e) {
 			throw new DBException(e);
@@ -165,7 +192,14 @@ public class DBAccessorImpl implements DBAccessor {
 				pstmt.setDouble(10, values.getInvestment());
 				pstmt.setDouble(11, values.getScalefactor());
 				pstmt.setDouble(12, values.getLoyality());
-				pstmt.setTimestamp(13, new Timestamp(Long.parseLong(values.getCalculationDate())));
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.S");
+				Date parsedDate = null;
+				try {
+					parsedDate = df.parse(values.getCalculationDate());
+				} catch (ParseException e) {
+					throw new DBException(e);
+				}
+				pstmt.setTimestamp(13, new Timestamp(parsedDate.getTime()));
 				pstmt.setDouble(14, values.getCustomerValueResult1());
 				pstmt.setDouble(15, values.getCustomerValueResult2());
 				pstmt.setInt(16, values.getId());
@@ -204,7 +238,7 @@ public class DBAccessorImpl implements DBAccessor {
 					 customervalues.setLoyality(rset.getInt("Loyality"));
 					 customervalues.setCalculationDate(""+rset.getTimestamp("CalculationDate"));
 					 customervalues.setCustomerValueResult1(rset.getDouble("CustomerValueResult1"));
-					 customervalues.setCustomerValueResult1(rset.getDouble("CustomerValueResult2"));
+					 customervalues.setCustomerValueResult2(rset.getDouble("CustomerValueResult2"));
 					 values.add(customervalues);
 				 }
 				
@@ -251,7 +285,14 @@ public class DBAccessorImpl implements DBAccessor {
 			pstmt.setString(4, customer.getNumber());
 			pstmt.setInt(5, customer.getZip());
 			pstmt.setString(6, customer.getCity());
-			pstmt.setTimestamp(7, new Timestamp(Long.parseLong(customer.getBirthday())));
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.S");
+			Date parsedDate = null;
+			try {
+				parsedDate = df.parse(customer.getBirthday());
+			} catch (ParseException e) {
+				throw new DBException(e);
+			}
+			pstmt.setTimestamp(7, new Timestamp(parsedDate.getTime()));
 			pstmt.setInt(8, customer.getId());
 			pstmt.executeUpdate();
 		} catch (SQLException e) {

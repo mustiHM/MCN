@@ -156,7 +156,15 @@ public class CustomerDataView extends JFrame implements Controller {
 	
 	public void initialize() {
 		
-		workflow = new WorkflowManagerImpl();
+		try {
+			workflow = new WorkflowManagerImpl();
+		}catch (DBException e) {
+				JOptionPane.showMessageDialog(contentPane,
+					    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
+					    "Datenbank-Fehler!",
+					    JOptionPane.ERROR_MESSAGE);
+			
+		}
 		listener = new ActionListenerImpl();
 		
 		setTitle("Kundendaten anzeigen/bearbeiten - CPVM");
@@ -233,8 +241,8 @@ public class CustomerDataView extends JFrame implements Controller {
 						    JOptionPane.ERROR_MESSAGE);
 				} catch (NumberFormatException e){
 					JOptionPane.showMessageDialog(contentPane,
-						    "Es ist ein Validierungs-Fehler aufgetreten: " + e.getMessage(),
-						    "Validierungsfehler!",
+						    "Es ist ein Datentyp-Fehler aufgetreten: " + e.getMessage(),
+						    "Datentypfehler!",
 						    JOptionPane.ERROR_MESSAGE);
 				}
 			} 

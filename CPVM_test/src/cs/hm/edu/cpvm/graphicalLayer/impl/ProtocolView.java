@@ -78,7 +78,15 @@ public class ProtocolView extends JFrame implements Controller {
 	
 	public void initialize() {
 		
-		workflow = new WorkflowManagerImpl();
+		try {
+			workflow = new WorkflowManagerImpl();
+		}catch (DBException e) {
+				JOptionPane.showMessageDialog(contentPane,
+					    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
+					    "Datenbank-Fehler!",
+					    JOptionPane.ERROR_MESSAGE);
+			
+		}
 		
 		setTitle("Protokoll anzeigen - CPVM");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

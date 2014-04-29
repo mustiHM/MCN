@@ -47,7 +47,15 @@ public class WaitingView extends JFrame implements Controller{
 
 	@Override
 	public void initialize() {
-		workflow = new WorkflowManagerImpl();
+		try {
+			workflow = new WorkflowManagerImpl();
+		}catch (DBException e) {
+				JOptionPane.showMessageDialog(contentPane,
+					    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
+					    "Datenbank-Fehler!",
+					    JOptionPane.ERROR_MESSAGE);
+			
+		}
 		customerResultView = new CustomerResultView();
 		customerResultView.initialize();
 		

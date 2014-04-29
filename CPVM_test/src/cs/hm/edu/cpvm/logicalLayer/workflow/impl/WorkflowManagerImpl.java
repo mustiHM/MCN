@@ -11,6 +11,7 @@ import cs.hm.edu.cpvm.common.models.Customerdata;
 import cs.hm.edu.cpvm.common.models.Customervalues;
 import cs.hm.edu.cpvm.common.models.CustomervaluesConfiguration;
 import cs.hm.edu.cpvm.dataLayer.DBAccessor;
+import cs.hm.edu.cpvm.dataLayer.impl.DBAccessorImpl;
 import cs.hm.edu.cpvm.dataLayer.impl.DBAccessorMock;
 import cs.hm.edu.cpvm.logicalLayer.calculation.Calculation;
 import cs.hm.edu.cpvm.logicalLayer.calculation.impl.CalculationImpl;
@@ -34,9 +35,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
 	
 	private static boolean isCalculationDone;
 	
-	public WorkflowManagerImpl(){
-		//TODO DBAccessor und Validation initialisieren
-		db = new DBAccessorMock();
+	public WorkflowManagerImpl() throws DBException{
+		//TODO DBAccessor wählen
+		//db = new DBAccessorMock();
+		db = new DBAccessorImpl();
 	}
 	
 	public ArrayList<Customervalues> getCustomervalues() throws DBException {

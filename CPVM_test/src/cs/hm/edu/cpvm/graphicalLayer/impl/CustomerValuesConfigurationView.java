@@ -42,6 +42,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	private ActionListener clickListener;
 	private DocumentListener docListener;
 	private JButton btnSpeichern;
+	private boolean isValid;
 	
 	/**
 	 * Die Werte aller Gewichtungen als Attribute zur schnellen Zwischenrechnung für das Feld "Gesamt"
@@ -97,7 +98,15 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	
 	@Override
 	public void initialize() {
-		workflow = new WorkflowManagerImpl();
+		try {
+			workflow = new WorkflowManagerImpl();
+		}catch (DBException e) {
+				JOptionPane.showMessageDialog(contentPane,
+					    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
+					    "Datenbank-Fehler!",
+					    JOptionPane.ERROR_MESSAGE);
+			
+		}
 		clickListener = new ActionListenerImpl();
 		docListener = new DocumentListenerImpl();
 		
@@ -266,35 +275,44 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		}
 		
 		private void saveChangings(){
-			try {
-				
-				configs.put("VertRenta", renta);
-				configs.put("VertROI", roi);
-				configs.put("VertDB", db);
-				configs.put("VertSkE", ske);
-				configs.put("VertIW", iw);
-				configs.put("VertCUP", cup);
-				configs.put("VertLP", loyal);
-				
-				boolean success=false;
-				success = workflow.updateCustomervaluesConfigurations(configs);
-				if(success){
-					JOptionPane.showMessageDialog(contentPane,
-						    "Die Daten wurden erfolgreich aktualisiert.",
-						    "Hinweis",
-						    JOptionPane.INFORMATION_MESSAGE);
+			if (isValid) {
+				try {
+
+					configs.put("VertRenta", renta);
+					configs.put("VertROI", roi);
+					configs.put("VertDB", db);
+					configs.put("VertSkE", ske);
+					configs.put("VertIW", iw);
+					configs.put("VertCUP", cup);
+					configs.put("VertLP", loyal);
+
+					boolean success = false;
+					success = workflow
+							.updateCustomervaluesConfigurations(configs);
+					if (success) {
+						JOptionPane.showMessageDialog(contentPane,
+								"Die Daten wurden erfolgreich aktualisiert.",
+								"Hinweis", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane
+								.showMessageDialog(
+										contentPane,
+										"Grenzwert überschritten oder Eingabedaten nicht korrekt. \nBitte überprüfen",
+										"Fehler", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (DBException e) {
+					JOptionPane.showMessageDialog(
+							contentPane,
+							"Es ist ein Datenbank-Fehler aufgetreten: "
+									+ e.getMessage(), "Datenbank-Fehler",
+							JOptionPane.ERROR_MESSAGE);
 				}
-				else{
-					JOptionPane.showMessageDialog(contentPane,
-						    "Grenzwert überschritten oder Eingabedaten nicht korrekt. \nBitte überprüfen",
-						    "Fehler",
-						    JOptionPane.ERROR_MESSAGE);
-				}
-			} catch (DBException e) {
-				JOptionPane.showMessageDialog(contentPane,
-					    "Es ist ein Datenbank-Fehler aufgetreten: " + e.getMessage(),
-					    "Datenbank-Fehler",
-					    JOptionPane.ERROR_MESSAGE);
+			}
+			else{
+				JOptionPane.showMessageDialog(
+						contentPane,
+						"Die Eingabe war nicht gültig. Bitte verwenden Sie keine Buchstaben!", "Format-Fehler",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -324,9 +342,11 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 			try{
 				total = calculateTotalValue();
 				txtTotal.setText("" + total);
+				isValid = true;
 			}catch (NumberFormatException e){
 				// Exceptions treten sicher auf, da während Änderungen der String-Wert nicht immer ein korrekter Double-Wert sein kann.
 				txtTotal.setText("...");
+				isValid = false;
 			}
 		}
 				
