@@ -16,7 +16,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -42,7 +45,9 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	private ActionListener clickListener;
 	private DocumentListener docListener;
 	private JButton btnSpeichern;
-	private boolean isValid;
+	private Locale fmtLocale;
+	private NumberFormat formatter;
+	private boolean isValid; // gibt an, ob der Gesamtwert gültig ist.
 	
 	/**
 	 * Die Werte aller Gewichtungen als Attribute zur schnellen Zwischenrechnung für das Feld "Gesamt"
@@ -75,18 +80,20 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 
 	/**
 	 * Lädt die Inhalte nochmal neu vom Workflow Manager und aktualisiert die Tabelle
+	 * @throws ParseException  Fehler bei falschem Format
+	 * @throws NumberFormatException Fehler bei falschem Format
 	 */
-	private void synchronizeData(){
+	private void synchronizeData() throws NumberFormatException , ParseException{
 		try {
 			configs = workflow.getCustomervaluesConfigurations();
-			txtRenta.setText("" + configs.get("VertRenta"));
-			txtRoi.setText("" + configs.get("VertROI"));
-			txtDeckungsbeitrag.setText("" + configs.get("VertDB"));
-			txtSkaleneffekt.setText("" + configs.get("VertSkE"));
-			txtInformationswert.setText("" + configs.get("VertIW"));
-			txtCup.setText("" + configs.get("VertCUP"));
-			txtLoyalitaet.setText("" + configs.get("VertLP"));
-			txtTotal.setText("" + calculateTotalValue());
+			txtRenta.setText(formatter.format(configs.get("VertRenta")));
+			txtRoi.setText(formatter.format(configs.get("VertROI")));
+			txtDeckungsbeitrag.setText(formatter.format(configs.get("VertDB")));
+			txtSkaleneffekt.setText(formatter.format(configs.get("VertSkE")));
+			txtInformationswert.setText(formatter.format(configs.get("VertIW")));
+			txtCup.setText(formatter.format(configs.get("VertCUP")));
+			txtLoyalitaet.setText(formatter.format(configs.get("VertLP")));
+			txtTotal.setText(formatter.format(calculateTotalValue()));
 			
 		} catch (DBException e) {
 			JOptionPane.showMessageDialog(this,
@@ -98,6 +105,11 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	
 	@Override
 	public void initialize() {
+		fmtLocale = Locale.getDefault();
+		formatter = NumberFormat.getInstance(fmtLocale);
+		formatter.setMaximumFractionDigits(2);
+		formatter.setMinimumFractionDigits(2);
+		
 		try {
 			workflow = new WorkflowManagerImpl();
 		}catch (DBException e) {
@@ -211,7 +223,14 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 
 	@Override
 	public void display() {
-		synchronizeData();
+		try {
+			synchronizeData();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(
+					contentPane,
+					"Die Daten aus der Datenbank sind nicht gültig bzw. haben ein falsches Format!", "Format-Fehler",
+					JOptionPane.ERROR_MESSAGE);
+		}
 		this.setVisible(true);
 	}
 
@@ -225,16 +244,24 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 	 * Berechnet den Gesamtwert der eingetragenen Gewichtungen.
 	 * @return Gesamtwert der Gewichtungen
 	 * @throws NumberFormatException Fehler falls kein Double-Wert eingegeben wird.
+	 * @throws ParseException Fehler bei falschem Format
 	 */
-	private double calculateTotalValue() throws NumberFormatException{
-		
-		renta = Double.parseDouble(txtRenta.getText());
-		roi = Double.parseDouble(txtRoi.getText());
-		db = Double.parseDouble(txtDeckungsbeitrag.getText());
-		ske = Double.parseDouble(txtSkaleneffekt.getText());
-		iw = Double.parseDouble(txtInformationswert.getText());
-		cup = Double.parseDouble(txtCup.getText());
-		loyal = Double.parseDouble(txtLoyalitaet.getText());
+	private double calculateTotalValue() throws NumberFormatException, ParseException{
+		Number number;
+		number = formatter.parse(txtRenta.getText());
+		renta = number.doubleValue();
+		number = formatter.parse(txtRoi.getText());
+		roi = number.doubleValue();
+		number = formatter.parse(txtDeckungsbeitrag.getText());
+		db = number.doubleValue();
+		number = formatter.parse(txtSkaleneffekt.getText());
+		ske = number.doubleValue();
+		number = formatter.parse(txtInformationswert.getText());
+		iw = number.doubleValue();
+		number = formatter.parse(txtCup.getText());
+		cup = number.doubleValue();
+		number = formatter.parse(txtLoyalitaet.getText());
+		loyal = number.doubleValue();
 		
 		return renta+roi+db+ske+iw+cup+loyal;
 	}
@@ -297,7 +324,7 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 						JOptionPane
 								.showMessageDialog(
 										contentPane,
-										"Grenzwert überschritten oder Eingabedaten nicht korrekt. \nBitte überprüfen",
+										"Der Gesamtwert 100 wurde überschritten oder die Eingabedaten sind nicht korrekt. \nBitte überprüfen!",
 										"Fehler", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (DBException e) {
@@ -341,9 +368,14 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		private void updateTotalValue(){
 			try{
 				total = calculateTotalValue();
-				txtTotal.setText("" + total);
+				txtTotal.setText(formatter.format(total));
 				isValid = true;
 			}catch (NumberFormatException e){
+				// Exceptions treten sicher auf, da während Änderungen der String-Wert nicht immer ein korrekter Double-Wert sein kann.
+				txtTotal.setText("...");
+				isValid = false;
+			}
+			catch (ParseException e){
 				// Exceptions treten sicher auf, da während Änderungen der String-Wert nicht immer ein korrekter Double-Wert sein kann.
 				txtTotal.setText("...");
 				isValid = false;

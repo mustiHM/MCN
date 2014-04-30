@@ -7,7 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,6 +38,8 @@ public class CustomerResultView extends JFrame implements Controller {
 	private JButton btnProtokoll;
 	private ActionListener listener;
 	private Controller protocolView;
+	private Locale fmtLocale;
+	private NumberFormat formatter;
 
 	/**
 	 * Nur zu Testzwecken
@@ -78,8 +82,8 @@ public class CustomerResultView extends JFrame implements Controller {
 			for(int i=0; i<values.size(); i++){
 				Customervalues value = values.get(i);
 				model.setValueAt(value.getCustomerdata().getFirstName() + " " + value.getCustomerdata().getLastName(), i, 0);
-				model.setValueAt(value.getCustomerValueResult1(), i, 1);
-				model.setValueAt(value.getCustomerValueResult2(), i, 2);
+				model.setValueAt(formatter.format(value.getCustomerValueResult1()), i, 1);
+				model.setValueAt(formatter.format(value.getCustomerValueResult2()), i, 2);
 			}
 		}
 		
@@ -98,6 +102,12 @@ public class CustomerResultView extends JFrame implements Controller {
 
 	@Override
 	public void initialize() {
+		
+		fmtLocale = Locale.getDefault();
+		formatter = NumberFormat.getInstance(fmtLocale);
+		formatter.setMaximumFractionDigits(2);
+		formatter.setMinimumFractionDigits(2);
+		
 		try {
 			workflow = new WorkflowManagerImpl();
 		}catch (DBException e) {
