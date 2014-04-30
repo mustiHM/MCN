@@ -1,0 +1,3 @@
+2014-04-29 12:50:31,166 DEBUG [AWT-EventQueue-0] cs.hm.edu.cpvm.logicalLayer.calculation.impl.CalculationImpl: *** Berechnungskomponente erfolgreich vorbereitet ***
+2014-04-29 12:50:31,166 DEBUG [AWT-EventQueue-0] cs.hm.edu.cpvm.logicalLayer.calculation.impl.CalculationImpl: Beginne mit Statistischen Berechnungen..
+2014-04-29 12:50:31,166 DEBUG [AWT-EventQueue-0] cs.hm.edu.cpvm.logicalLayer.calculation.impl.CalculationImpl: statistische Berechnungen fertig..

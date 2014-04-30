@@ -25,7 +25,6 @@ public class WaitingView extends JFrame implements Controller{
 	private JPanel contentPane;
 	private WorkflowManager workflow;
 	private WorkflowHandler handler; // eigener Thread zum Beobachten des Workflows
-	private Controller customerResultView;
 	
 	/**
 	 * Dient nur zu Testzwecken
@@ -56,8 +55,6 @@ public class WaitingView extends JFrame implements Controller{
 					    JOptionPane.ERROR_MESSAGE);
 			
 		}
-		customerResultView = new CustomerResultView();
-		customerResultView.initialize();
 		
 		
 		setTitle("Berechnungsvorgang");
@@ -130,6 +127,9 @@ public class WaitingView extends JFrame implements Controller{
 			}while(!workflow.isCalculationDone());
 			
 			close();
+			Controller customerResultView;
+			customerResultView = new CustomerResultView();
+			customerResultView.initialize();
 			customerResultView.display();
 			//finish();
 		}

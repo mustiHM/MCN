@@ -8,7 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -37,6 +40,8 @@ public class CustomerDataView extends JFrame implements Controller {
 	private String[] titles;
 	private JButton btnSpeichern;
 	private ActionListener listener;
+	private Locale fmtLocale;
+	private NumberFormat formatter;
 
 
 	/**
@@ -76,18 +81,18 @@ public class CustomerDataView extends JFrame implements Controller {
 				Customervalues value = values.get(i);
 				model.setValueAt(value.getCustomerdata().getId(), i, 0);
 				model.setValueAt(value.getCustomerdata().getFirstName() + " " + value.getCustomerdata().getLastName(), i, 1);
-				model.setValueAt(value.getProfit(), i, 2);
-				model.setValueAt(value.getSales(), i, 3);
+				model.setValueAt(formatter.format(value.getProfit()), i, 2);
+				model.setValueAt(formatter.format(value.getSales()), i, 3);
 				model.setValueAt(value.getContracts(), i, 4);
-				model.setValueAt(value.getSalesDeduction(), i, 5);
-				model.setValueAt(value.getInformationValue(), i, 6);
+				model.setValueAt(formatter.format(value.getSalesDeduction()), i, 5);
+				model.setValueAt(formatter.format(value.getInformationValue()), i, 6);
 				model.setValueAt(value.getCup(), i, 7);
 				model.setValueAt(value.getLoyality(), i, 8);
-				model.setValueAt(value.getInvestment(), i, 9);
-				model.setValueAt(value.getProfitability(), i, 10);
-				model.setValueAt(value.getRoi(), i, 11);
-				model.setValueAt(value.getProfitMargin(), i, 12);
-				model.setValueAt(value.getScalefactor(), i, 13);
+				model.setValueAt(formatter.format(value.getInvestment()), i, 9);
+				model.setValueAt(formatter.format(value.getProfitability()), i, 10);
+				model.setValueAt(formatter.format(value.getRoi()), i, 11);
+				model.setValueAt(formatter.format(value.getProfitMargin()), i, 12);
+				model.setValueAt(formatter.format(value.getScalefactor()), i, 13);
 			}
 		}
 		
@@ -109,8 +114,9 @@ public class CustomerDataView extends JFrame implements Controller {
 	
 	/**
 	 * Liest die Daten aus der Tabelle (bis zur Spalte Loyalitätspotenzial) und speichert sie zurück in die ArrayList.
+	 * @throws ParseException  bei falschen Datenformaten
 	 */
-	private void updateValues(){
+	private void updateValues() throws ParseException{
 		if(values!=null){
 			for(int i=0; i<model.getRowCount(); i++){
 				Customervalues value = values.get(i);
@@ -120,30 +126,40 @@ public class CustomerDataView extends JFrame implements Controller {
 					tableObj = (Object) model.getValueAt(i, columnCount);
 					if (tableObj instanceof String){
 						// geänderte Werte haben den Datentyp String.
+						Number number;
 						switch(columnCount){
-							case 2: value.setProfit(Double.parseDouble((String) tableObj));
+							case 2: number = formatter.parse((String) tableObj);
+									value.setProfit(number.doubleValue());
 									break;
-							case 3: value.setSales(Double.parseDouble((String) tableObj));
+							case 3: number = formatter.parse((String) tableObj);
+									value.setSales(number.doubleValue());
 									break;
 							case 4: value.setContracts(Integer.parseInt((String) tableObj));
 									break;
-							case 5: value.setSalesDeduction(Double.parseDouble((String) tableObj));
+							case 5: number = formatter.parse((String) tableObj);
+									value.setSalesDeduction(number.doubleValue());
 									break;
-							case 6: value.setInformationValue(Double.parseDouble((String) tableObj));
+							case 6: number = formatter.parse((String) tableObj);
+									value.setInformationValue(number.doubleValue());
 									break;
 							case 7: value.setCup(Integer.parseInt((String) tableObj));
 									break;
 							case 8: value.setLoyality(Integer.parseInt((String) tableObj));
 									break;
-							case 9: value.setInvestment(Double.parseDouble((String) tableObj));
+							case 9: number = formatter.parse((String) tableObj);
+									value.setInvestment(number.doubleValue());
 									break;
-							case 10: value.setProfitability(Double.parseDouble((String) tableObj));
+							case 10:number = formatter.parse((String) tableObj); 
+									value.setProfitability(number.doubleValue());
 									break;
-							case 11: value.setRoi(Double.parseDouble((String) tableObj));
+							case 11:number = formatter.parse((String) tableObj); 
+									value.setRoi(number.doubleValue());
 									break;
-							case 12: value.setProfitMargin(Double.parseDouble((String) tableObj));
+							case 12:number = formatter.parse((String) tableObj); 
+									value.setProfitMargin(number.doubleValue());
 									break;
-							case 13: value.setScalefactor(Double.parseDouble((String) tableObj));
+							case 13:number = formatter.parse((String) tableObj); 
+									value.setScalefactor(number.doubleValue());
 									break;
 						}
 					}
@@ -155,6 +171,11 @@ public class CustomerDataView extends JFrame implements Controller {
 	}
 	
 	public void initialize() {
+		
+		fmtLocale = Locale.getDefault();
+		formatter = NumberFormat.getInstance(fmtLocale);
+		formatter.setMaximumFractionDigits(2);
+		formatter.setMinimumFractionDigits(2);
 		
 		try {
 			workflow = new WorkflowManagerImpl();
@@ -240,6 +261,11 @@ public class CustomerDataView extends JFrame implements Controller {
 						    "Validierungsfehler!",
 						    JOptionPane.ERROR_MESSAGE);
 				} catch (NumberFormatException e){
+					JOptionPane.showMessageDialog(contentPane,
+						    "Es ist ein Datentyp-Fehler aufgetreten: " + e.getMessage(),
+						    "Datentypfehler!",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (ParseException e){
 					JOptionPane.showMessageDialog(contentPane,
 						    "Es ist ein Datentyp-Fehler aufgetreten: " + e.getMessage(),
 						    "Datentypfehler!",
