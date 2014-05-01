@@ -276,26 +276,33 @@ public class CustomerValuesConfigurationView extends JFrame implements Controlle
 		public void actionPerformed(ActionEvent arg0) {
 			
 			if(arg0.getSource() == btnSpeichern){
-				if(total<100){
-					// laut Anforderung: Unter 100 soll ein Hinweis erscheinen
-					Object[] options = {"Ja", "Nein"};
-					int response = JOptionPane.showOptionDialog(contentPane,
-					    "Der Gesamtwert der Gewichtungen liegt unter 100. \nMöchten Sie die Änderungen trotzdem speichern?",
-					    "Warnung",
-					    JOptionPane.YES_NO_CANCEL_OPTION,
-					    JOptionPane.WARNING_MESSAGE,
-					    null,
-					    options,
-					    options[0]);
-					
-					if(response == 0){
-						// Klick auf "Ja"
+				if (isValid) {
+					if (total < 100) {
+						// laut Anforderung: Unter 100 soll ein Hinweis erscheinen
+						Object[] options = { "Ja", "Nein" };
+						int response = JOptionPane
+								.showOptionDialog(
+										contentPane,
+										"Der Gesamtwert der Gewichtungen liegt unter 100. \nMöchten Sie die Änderungen trotzdem speichern?",
+										"Warnung",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.WARNING_MESSAGE, null,
+										options, options[0]);
+
+						if (response == 0) {
+							// Klick auf "Ja"
+							saveChangings();
+						}
+
+					} else {
 						saveChangings();
 					}
-						
 				}
 				else{
-					saveChangings();
+					JOptionPane.showMessageDialog(
+							contentPane,
+							"Die Eingabe war nicht gültig. Bitte verwenden Sie keine Buchstaben!", "Format-Fehler",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			
